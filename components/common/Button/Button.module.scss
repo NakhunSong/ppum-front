@@ -1,0 +1,11 @@
+@import 'styles/base.scss';
+
+.wrapper {
+  margin-top: 8px;
+  background-color: $brand-color;
+  border: 1px solid $brand-color;
+  border-radius: $border-radius;
+  color: white;
+  max-width: 100px;
+  padding: $button-padding;
+}

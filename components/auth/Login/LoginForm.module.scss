@@ -1,0 +1,41 @@
+@import 'styles/base.scss';
+
+@keyframes appearance {
+  0% {
+    opacity: 0;
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.wrapper {
+  height: 100%;
+  max-width: 230px;
+  max-height: 500px;
+  position: relative;
+}
+
+.form {
+  height: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  animation: appearance 3s ease-out;
+}
+
+.guide {
+  bottom: 5%;
+  font-size: 13px;
+  position: absolute;
+  text-align: center;
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
