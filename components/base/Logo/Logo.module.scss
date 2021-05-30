@@ -5,7 +5,7 @@
     max-width: 230px;
     max-height: 230px;
   }
-  50% {
+  70% {
     max-width: 230px;
     max-height: 230px;
   }
@@ -19,12 +19,12 @@
     top: 50%;
     transform: translateY(-50%);
   }
-  50% {
+  70% {
     top: 50%;
     transform: translateY(-50%);
   }
   100% {
-    top: 0%;
+    top: 5%;
   }
 }
 
@@ -32,7 +32,7 @@
   display: flex;
   justify-content: center;
   position: absolute;
-  top: 0%;
+  top: 5%;
   animation: moving 3s ease-out;
 }
 

@@ -1,0 +1,51 @@
+@import 'styles/base.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  width: 100%;
+  height: 100%;
+}
+
+.calendar {
+  max-height: 500px;
+  height: 100%;
+}
+
+.calendar_head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25%;
+}
+
+.calendar_body {
+  display: flex;
+  flex-wrap: wrap;
+  height: 75%;
+}
+
+.current_month {
+  width: auto;
+  height: auto;
+  .current_month_number {
+    font-size: 40px;
+  }
+  .current_month_text {
+    font-size: 24px;
+    font-weight: bold;
+  }
+}
+
+.calendar_item {
+  flex-basis: 14%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gray {
+  color: gray;
+}
