@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Calendar as CalendarInfo } from "lib/helpers/trip/calendar";
+import { useCalendar } from "hooks/useCalendar";
 import { useEffect, useState } from "react"
 import styles from './Calendar.module.scss';
 
@@ -34,28 +34,10 @@ function CalendarItem({ children, context }) {
 }
 
 export default function Calendar() {
-  const [currentYear, setCurrentYear] = useState(null);
-  const [currentMonth, setCurrentMonth] = useState(null);
-  const [currentDays, setCurrentDays] = useState(null);
-  const [prevYear, setPrevYear] = useState(null);
-  const [prevMonth, setPrevMonth] = useState(null);
-  const [prevDays, setPrevDays] = useState(null);
-  const [nextYear, setNextYear] = useState(null);
-  const [nextMonth, setNextMonth] = useState(null);
-  const [nextDays, setNextDays] = useState(null);
+  const [calendar, dispatch] = useCalendar();
   const [dateArray, setDateArray] = useState([]);
 
   useEffect(() => {
-    const calendar = new CalendarInfo();
-    setCurrentMonth(() => calendar.currentMonth);
-    setCurrentYear(() => calendar.currentYear);
-    setCurrentDays(() => calendar.currentDays);
-    setPrevMonth(() => calendar.prevMonth);
-    setPrevYear(() => calendar.prevYear);
-    setPrevDays(() => calendar.prevDays);
-    setNextMonth(() => calendar.nextMonth);
-    setNextYear(() => calendar.nextYear);
-    setNextDays(() => calendar.nextDays);
     const array = getDateArray({
       firstDay: calendar.currentFirstDay,
       lastDay: calendar.currentLastDay,
@@ -63,7 +45,7 @@ export default function Calendar() {
       prevDays: calendar.prevDays,
     });
     setDateArray(() => array);
-  }, []);
+  }, [calendar]);
 
 
   return (
@@ -72,7 +54,7 @@ export default function Calendar() {
         <div className={styles.calendar_head}>
           <div className={styles.current_month}>
             <span className={styles.current_month_number}>
-              {currentMonth}
+              {calendar.currentMonth}
             </span>
             <span className={styles.current_month_text}>
               월
