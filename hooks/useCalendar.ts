@@ -1,14 +1,14 @@
 import { getDays, getFirstAndLastDay, getPrevYearAndMonth, getNextYearAndMonth } from "lib/helpers/trip/calendar";
 import { useEffect, useReducer } from "react";
 
-const currentYear = new Date().getFullYear();
-const currentMonth = new Date().getMonth() + 1;
-const currentDays = getDays(currentYear, currentMonth);
+const initYear = new Date().getFullYear();
+const initMonth = new Date().getMonth() + 1;
+const initDays = getDays(initYear, initMonth);
 
 const initialState = {
-  currentYear,
-  currentMonth,
-  currentDays,
+  currentYear: initYear,
+  currentMonth: initMonth,
+  currentDays: initDays,
   currentFirstDay: null,
   currentLastDay: null,
   prevYear: null,
@@ -17,22 +17,51 @@ const initialState = {
   nextYear: null,
   nextMonth: null,
   nextDays: null,
+  start: null,
+  end: null,
 };
+
+function initCalendar(_y, _m) {
+  const currentYear = _y;
+  const currentMonth = _m;
+  const currentDays = getDays(currentYear, currentMonth);
+  const {
+    firstDay: currentFirstDay,
+    lastDay: currentLastDay,
+  } = getFirstAndLastDay(currentYear, currentMonth, currentDays);
+  const { year: prevYear, month: prevMonth } = getPrevYearAndMonth(currentYear, currentMonth);
+  const prevDays = getDays(prevYear, prevMonth);
+  const { year: nextYear, month: nextMonth } = getNextYearAndMonth(currentYear, currentMonth);
+  const nextDays = getDays(nextYear, nextMonth);
+  
+  return {
+    currentFirstDay,
+    currentLastDay,
+    prevYear,
+    prevMonth,
+    prevDays,
+    nextYear,
+    nextMonth,
+    nextDays,
+  };
+}
 
 function reducer(state, action) {
   switch (action.type) {
     case 'calendar/INIT': {
-      const currentYear = state.currentYear;
-      const currentMonth = state.currentMonth;
-      const currentDays = state.currentDays;
       const {
-        firstDay: currentFirstDay,
-        lastDay: currentLastDay,
-      } = getFirstAndLastDay(currentYear, currentMonth, currentDays);
-      const { year: prevYear, month: prevMonth } = getPrevYearAndMonth(currentYear, currentMonth);
-      const prevDays = getDays(prevYear, prevMonth);
-      const { year: nextYear, month: nextMonth } = getNextYearAndMonth(currentYear, currentMonth);
-      const nextDays = getDays(nextYear, nextMonth);
+        currentFirstDay,
+        currentLastDay,
+        prevYear,
+        prevMonth,
+        prevDays,
+        nextYear,
+        nextMonth,
+        nextDays,
+      } = initCalendar(
+        state.currentYear,
+        state.currentMonth,
+      );
       
       return {
         ...state,
@@ -47,11 +76,70 @@ function reducer(state, action) {
       };
     }
     case 'calendar/PREV': {
-      return { ...state };
+      const currentYear = state.prevYear;
+      const currentMonth = state.prevMonth;
+      const currentDays = state.prevDays;
+      const {
+        currentFirstDay,
+        currentLastDay,
+        prevYear,
+        prevMonth,
+        prevDays,
+        nextYear,
+        nextMonth,
+        nextDays,
+      } = initCalendar(
+        currentYear,
+        currentMonth,
+      );
+      return {
+        ...state,
+        currentYear,
+        currentMonth,
+        currentDays,
+        currentFirstDay,
+        currentLastDay,
+        prevYear,
+        prevMonth,
+        prevDays,
+        nextYear,
+        nextMonth,
+        nextDays,
+      };
     }
     case 'calendar/NEXT': {
-      return { ...state };
+      const currentYear = state.nextYear;
+      const currentMonth = state.nextMonth;
+      const currentDays = state.nextDays;
+      const {
+        currentFirstDay,
+        currentLastDay,
+        prevYear,
+        prevMonth,
+        prevDays,
+        nextYear,
+        nextMonth,
+        nextDays,
+      } = initCalendar(
+        currentYear,
+        currentMonth,
+      );
+      return {
+        ...state,
+        currentYear,
+        currentMonth,
+        currentDays,
+        currentFirstDay,
+        currentLastDay,
+        prevYear,
+        prevMonth,
+        prevDays,
+        nextYear,
+        nextMonth,
+        nextDays,
+      };
     }
+    case 'SELECT_DATE': {}
     default: return state;
   }
 }

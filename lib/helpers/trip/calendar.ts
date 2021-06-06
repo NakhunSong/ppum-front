@@ -21,13 +21,13 @@ export function getFirstAndLastDay(year: number, month: number, days: number) {
 }
 
 export function getPrevYearAndMonth(y, m): DateParam {
-  const year = y - 1 >= 0 ? y -1 : 0;
   const month = m - 1 || 12;
+  const year = month === 12 ? y -1 : y;
   return { year, month };
 }
 
 export function getNextYearAndMonth(y, m): DateParam {
-  const year = y + 1;
-  const month = m + 1 % 13 || 1;
+  const month = (m + 1) % 13 || 1;
+  const year = month === 1 ? y + 1 : y;
   return { year, month };
 }
