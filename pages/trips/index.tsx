@@ -1,11 +1,11 @@
 import MobileTemplate from "components/template/MobileTemplate";
-import Calendar from "components/trip/Calendar";
+import TripSelectSection from "components/trip/TripSelectSection";
 
 export default function Trips() {
 
   return (
     <MobileTemplate>
-      <Calendar />
+      <TripSelectSection />
     </MobileTemplate>
   )
 }

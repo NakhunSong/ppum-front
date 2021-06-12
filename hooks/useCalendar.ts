@@ -21,9 +21,21 @@ const initialState = {
   end: null,
 };
 
-function initCalendar(_y, _m) {
-  const currentYear = _y;
-  const currentMonth = _m;
+interface DateObject {
+  year: string;
+  month: string;
+  date: string;
+}
+
+function getDateByDateObject(dateObject: DateObject) {
+  console.log('dateObject: ', dateObject);
+  const { year: y, month: m, date: d } = dateObject;
+  return new Date(`${y} ${m} ${d}`);
+}
+
+function initCalendar(y, m) {
+  const currentYear = y;
+  const currentMonth = m;
   const currentDays = getDays(currentYear, currentMonth);
   const {
     firstDay: currentFirstDay,
@@ -139,7 +151,28 @@ function reducer(state, action) {
         nextDays,
       };
     }
-    case 'SELECT_DATE': {}
+    case 'calendar/SELECT_DATE': {
+      const { start, end } = state;
+      const { data, turn } = action.payload;
+      let setable = true;
+      if (end && turn === 'start') {
+        const startDate = +getDateByDateObject(data);
+        const endDate = +getDateByDateObject(end);
+        setable = startDate < endDate;
+      }
+      if (start && turn === 'end') {
+        const startDate = +getDateByDateObject(start);
+        const endDate = +getDateByDateObject(data);
+        setable = startDate < endDate;
+      }
+      if (setable) {
+        return {
+          ...state,
+          [turn]: data,
+        };
+      }
+      return { ...state };
+    }
     default: return state;
   }
 }
@@ -151,4 +184,52 @@ export function useCalendar() {
   }, []);
   
   return [calendar, dispatch];
+}
+
+
+interface DateArrayParams {
+  firstDay: number;
+  lastDay: number;
+  currentYear: number;
+  currentMonth: number;
+  currentDays: number;
+  prevYear: number;
+  prevMonth: number;
+  prevDays: number;
+  nextYear: number;
+  nextMonth: number;
+  nextDays?: number;
+}
+
+export function getDateArray({
+  firstDay,
+  lastDay,
+  currentYear,
+  currentMonth,
+  currentDays,
+  prevYear,
+  prevMonth,
+  prevDays,
+  nextYear,
+  nextMonth,
+}: DateArrayParams) {
+  const prevArray = Array.from({ length: firstDay }).map((e, i) => ({
+    context: 'prev',
+    date: prevDays - i,
+    month: prevMonth,
+    year: prevYear,
+  })).sort(() => -1);
+  const nextArray = Array.from({ length: 6 - lastDay }).map((e, i) => ({
+    context: 'next',
+    date: i + 1,
+    month: nextMonth,
+    year: nextYear,
+  }));
+  const currentArray = Array.from({ length: currentDays }).map((e, i) => ({
+    context: 'current',
+    date: i + 1,
+    month: currentMonth,
+    year: currentYear,
+  }));
+  return [...prevArray, ...currentArray, ...nextArray];
 }
