@@ -21,6 +21,7 @@ export default function MyTrip() {
   let map;
 
   const [activeMarker, setActiveMarker] = useState(false);
+  const [draggingMarker, setDraggingMarker] = useState(false);
 
   useEffect(() => {
     let container = document.getElementById('map');
@@ -39,8 +40,23 @@ export default function MyTrip() {
         map,
         position: latlng,
         image : markerImage,
+        draggable: true,
+        zIndex: 5,
       });
-      marker.setDraggable(true);
+      window.kakao.maps.event.addListener(marker, 'dragstart', function() {
+        const size = new window.kakao.maps.Size(29, 40);
+        const image = new window.kakao.maps.MarkerImage(imageSrc, size);
+        marker.setImage(image);
+        setDraggingMarker(true);
+      });
+      window.kakao.maps.event.addListener(marker, 'dragend', function() {
+        const size = new window.kakao.maps.Size(24, 35);
+        const image = new window.kakao.maps.MarkerImage(imageSrc, size);
+        marker.setImage(image);
+        setDraggingMarker(false);
+        const location = marker.getPosition();
+        console.log('location: ', location);
+      });
     }
   }, []);
 
@@ -51,9 +67,24 @@ export default function MyTrip() {
     const marker = new window.kakao.maps.Marker({ 
       position: latlng,
       image : markerImage,
+      draggable: true,
+      zIndex: 5,
+    });
+    window.kakao.maps.event.addListener(marker, 'dragstart', function() {
+      const size = new window.kakao.maps.Size(29, 40);
+      const image = new window.kakao.maps.MarkerImage(imageSrc, size);
+      marker.setImage(image);
+      setDraggingMarker(true);
+    });
+    window.kakao.maps.event.addListener(marker, 'dragend', function() {
+      const size = new window.kakao.maps.Size(24, 35);
+      const image = new window.kakao.maps.MarkerImage(imageSrc, size);
+      marker.setImage(image);
+      setDraggingMarker(false);
+      const location = marker.getPosition();
+      console.log('location: ', location);
     });
     marker.setMap(map);
-    marker.setDraggable(true);
   };
 
   const clickHandler = (event) => { 
@@ -86,7 +117,7 @@ export default function MyTrip() {
         />
       )}
     >
-      <KakaoMap />
+      <KakaoMap draggingMarker={draggingMarker} />
     </MobileTemplate>
   )
 }

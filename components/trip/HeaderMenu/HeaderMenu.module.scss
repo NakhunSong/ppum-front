@@ -8,7 +8,14 @@
   display: flex;
 }
 
-.image { height: 100%; }
+.image {
+  cursor: pointer;
+  height: 100%;
+  transition: all .15s ease-in-out;
+  &:hover {
+    transform: scale(1.2, 1.2);
+  }
+}
 
 .left {
   width: 50%;
