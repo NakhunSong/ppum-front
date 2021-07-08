@@ -2,6 +2,7 @@ import MobileTemplate from "components/template/MobileTemplate";
 import { useCallback, useEffect, useState } from "react";
 import HeaderMenu from "../HeaderMenu";
 import KakaoMap from "../KakaoMap";
+import receiptsJson from 'services/receipts.json';
 
 declare global {
   interface Window {
@@ -11,18 +12,12 @@ declare global {
 
 const imageSrc = "/images/trip/marker_selected.svg";
 
-const locations = [
-  { lat: 33.450705, lng: 126.570677 },
-  { lat: 33.450936, lng: 126.569477 },
-  { lat: 33.450879, lng: 126.569940 },
-];
-
 export default function MyTrip() {
   let map;
-
+  
   const [activeMarker, setActiveMarker] = useState(false);
   const [draggingMarker, setDraggingMarker] = useState(false);
-
+  
   useEffect(() => {
     let container = document.getElementById('map');
     let options = {
@@ -31,17 +26,32 @@ export default function MyTrip() {
     };
     map = new window.kakao.maps.Map(container, options);
       
-    for (const location of locations) {
-      const imageSize = new window.kakao.maps.Size(24, 35);
-      const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+    for (const receipt of receiptsJson) {
+      const { id, location } = receipt;
       const { lat, lng } = location;
+      const imageSize = new window.kakao.maps.Size(24, 35);
       const latlng = new window.kakao.maps.LatLng(lat, lng);
+      const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
       const marker = new window.kakao.maps.Marker({
         map,
         position: latlng,
         image : markerImage,
         draggable: true,
+        clickable: true,
         zIndex: 5,
+      });
+      window.kakao.maps.event.addListener(marker, 'click', function() {
+        alert(id)
+      });
+      window.kakao.maps.event.addListener(marker, 'mouseover', function() {
+        const size = new window.kakao.maps.Size(29, 40);
+        const image = new window.kakao.maps.MarkerImage(imageSrc, size);
+        marker.setImage(image);
+      });
+      window.kakao.maps.event.addListener(marker, 'mouseout', function() {
+        const size = new window.kakao.maps.Size(25, 35);
+        const image = new window.kakao.maps.MarkerImage(imageSrc, size);
+        marker.setImage(image);
       });
       window.kakao.maps.event.addListener(marker, 'dragstart', function() {
         const size = new window.kakao.maps.Size(29, 40);
@@ -68,6 +78,7 @@ export default function MyTrip() {
       position: latlng,
       image : markerImage,
       draggable: true,
+      clickable: true,
       zIndex: 5,
     });
     window.kakao.maps.event.addListener(marker, 'dragstart', function() {

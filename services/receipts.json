@@ -1,0 +1,59 @@
+[  
+  {
+    "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f31",
+    "location": {
+      "lat": 33.450705,
+      "lng": 126.570677
+    },
+    "name": "편의점",
+    "prices": 24000,
+    "receiptItems": [
+      {
+        "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+        "name": "과자",
+        "price": 4000,
+        "prices": 12000
+      },
+      {
+        "id": "a12db469-b7c6-4a26-821e-dc2132dc9e52",
+        "name": "음료수",
+        "price": 6000,
+        "prices": 12000
+      }
+    ]
+  },
+  {
+    "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f32",
+    "location": {
+      "lat": 33.450936,
+      "lng": 126.569477
+    },
+    "name": "편의점2",
+    "prices": 8000,
+    "receiptItems": [
+      {
+        "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+        "name": "젤리",
+        "price": 4000,
+        "prices": 8000
+      }
+    ]
+  },
+  {
+    "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f33",
+    "location": {
+      "lat": 33.450879,
+      "lng": 126.569940
+    },
+    "name": "편의점3",
+    "prices": 9000,
+    "receiptItems": [
+      {
+        "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+        "name": "아이스크림",
+        "price": 3000,
+        "prices": 9000
+      }
+    ]
+  }
+]
