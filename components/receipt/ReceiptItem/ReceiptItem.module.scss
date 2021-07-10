@@ -1,0 +1,21 @@
+@import 'base.scss';
+
+.wrapper {
+  border-top: 1px solid rgba(139, 107, 19, 0.6);
+  padding-top: 16px;
+  
+  span { color: rgb(78, 78, 78); }
+}
+
+.wrapper_label {}
+
+.item_wrapper {
+  padding: 16px 0;
+  & + & {
+    border-top: 1px dashed rgba(139, 107, 19, 0.6);
+  }
+}
+
+.item_wrapper_label {
+  margin-bottom: 8px;
+}

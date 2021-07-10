@@ -1,0 +1,72 @@
+@import 'base.scss';
+
+.wrapper {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+
+  span { color: rgb(78, 78, 78); }
+}
+
+.receipt_form {
+  position: absolute;
+  top: 25%;
+  background-color: rgb(235, 235, 235);
+  border-radius: $border-radius-mid;
+  opacity: 0.9;
+  width: 250px;
+  max-height: 300px;
+  min-height: 56px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.form_inner {
+  overflow-y: auto;
+}
+
+.form_wrapper_label {
+  margin-bottom: 8px;
+}
+
+.input_wrapper {
+  & + & {
+    margin-top: 4px;
+  }
+}
+
+.input {
+  border: 1px solid $brand-color;
+  border-radius: $border-radius-mid;
+  height: 30px;
+  font-size: 16px;
+  padding: $input-padding;
+}
+
+.button_wrapper {
+  position: absolute;
+  bottom: -30px;
+}
+
+.plus_button {
+  width: 50px;
+  height: 50px;
+}
+
+.receipt_info_wrapper {
+  padding-bottom: 16px;
+}
+
+.receipt_items_wrapper {
+  border-top: 2px solid rgba(61, 21, 21, 0.6);
+  padding: 16px 0;
+}

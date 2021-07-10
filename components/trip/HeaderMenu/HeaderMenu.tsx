@@ -27,6 +27,11 @@ export default function HeaderMenu({
             : ''}.svg`}
           onClick={handleAddMarker}
         />
+        <img
+          alt="ppum"
+          className={styles.image}
+          src={`/images/trip/ppum.svg`}
+        />
       </div>
     </div>
   )
