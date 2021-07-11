@@ -12,13 +12,41 @@
         "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
         "name": "과자",
         "price": 4000,
-        "prices": 12000
+        "prices": 12000,
+        "users": [
+          {
+              "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+              "username": "test2@test.com",
+              "displayname": "test2",
+              "password": "1234"
+          }
+        ]
       },
       {
         "id": "a12db469-b7c6-4a26-821e-dc2132dc9e52",
         "name": "음료수",
         "price": 6000,
-        "prices": 12000
+        "prices": 12000,
+        "users": [
+          {
+              "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+              "username": "test2@test.com",
+              "displayname": "test2",
+              "password": "1234"
+          },
+          {
+              "id": "4a484c8d-4ad8-4c2c-b36c-f58a165c3d50",
+              "username": "test@test.com",
+              "displayname": "test",
+              "password": "1234"
+          },
+          {
+              "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+              "username": "test4@test.com",
+              "displayname": "test4",
+              "password": "1234"
+          }
+        ]
       }
     ]
   },
@@ -35,7 +63,21 @@
         "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
         "name": "젤리",
         "price": 4000,
-        "prices": 8000
+        "prices": 8000,
+        "users": [
+          {
+              "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+              "username": "test2@test.com",
+              "displayname": "test2",
+              "password": "1234"
+          },
+          {
+              "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+              "username": "test4@test.com",
+              "displayname": "test4",
+              "password": "1234"
+          }
+        ]
       }
     ]
   },
@@ -52,7 +94,21 @@
         "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
         "name": "아이스크림",
         "price": 3000,
-        "prices": 9000
+        "prices": 9000,
+        "users": [
+          {
+              "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+              "username": "test2@test.com",
+              "displayname": "test2",
+              "password": "1234"
+          },
+          {
+              "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+              "username": "test4@test.com",
+              "displayname": "test4",
+              "password": "1234"
+          }
+        ]
       }
     ]
   }

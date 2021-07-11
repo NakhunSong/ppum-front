@@ -8,6 +8,7 @@ type InputWrapper = {
 }
 
 type InputType = {
+  placeholder?: string,
   styleProps?: any,
   value?: any,
   onChange?: ChangeEventHandler<HTMLInputElement>,
@@ -24,13 +25,16 @@ function InputWrapper({ children, marginBottom }: InputWrapper): any {
   )
 }
 
-export default function Input({
-  styleProps,
-  value,
-  onChange,
-}: InputType) {
+export default function Input(props: InputType) {
+  const {
+    styleProps,
+    value,
+    onChange,
+    ...others
+  } = props
   return (
     <input
+      {...others}
       className={styles.input}
       style={styleProps}
       value={value}

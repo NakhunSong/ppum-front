@@ -1,8 +1,9 @@
 import { useClickoutside } from 'hooks/useClickoutside'
 import ReceiptButton from '../ReceiptButton'
-import ReceiptItem from '../ReceiptItem'
 import { Mode } from '../ReceiptButton/ReceiptButton'
 import styles from './ReceiptForm.module.scss'
+import ReceiptItem from '../ReceiptItem'
+import ReceiptInfo from '../ReceiptInfo'
 
 export const initialReceipt = {
   location: { lat: 0, lng: 0 },
@@ -25,30 +26,12 @@ export default function ReceiptForm({
   // onOk,
 }) {
   const { ref } = useClickoutside(onCancel)
-  
+
   return visible && (
     <div className={styles.wrapper}>
       <form ref={ref} className={styles.receipt_form}>
         <div className={styles.form_inner}>
-          <div className={styles.receipt_info_wrapper}>
-            <div className={styles.form_wrapper_label}>
-              <span>
-                영수증
-              </span>
-            </div>
-            <div className={styles.input_wrapper}>
-              <input
-                className={styles.input}
-                placeholder="장소명"
-              />
-            </div>
-            <div className={styles.input_wrapper}>
-              <input
-                className={styles.input}
-                placeholder="총 금액"
-              />
-            </div>
-          </div>
+          <ReceiptInfo receipt="" />
           <ReceiptItem receiptItems={receipt.receiptItems} />
         </div>
         <ReceiptButton

@@ -23,12 +23,10 @@ export default function MyTrip() {
   const [formVisible, setFormVisible] = useState(false)
   const [receipt, setReceipt] = useState<Receipt>(initialReceipt)
 
-  console.log('formVisible: ', formVisible);
-
   const handleCancelFormVisible = useCallback(() => {
     console.log('cancel')
     setFormVisible(false)
-    setReceipt(initialReceipt);
+    setReceipt(initialReceipt)
   }, [])
 
   const handleAddReceiptItem = useCallback((e) => {
@@ -39,8 +37,40 @@ export default function MyTrip() {
         ...r.receiptItems,
         initialReceiptItem,
       ],
-    }));
+    }))
   }, [])
+
+  const setMarkerEvent = (marker, receiptProp) => {
+    window.kakao.maps.event.addListener(marker, 'click', function(e) {
+      setTimeout(() => setFormVisible(true), 0);
+      setReceipt(receiptProp);
+    })
+    window.kakao.maps.event.addListener(marker, 'mouseover', function() {
+      const size = new window.kakao.maps.Size(60, 60)
+      const image = new window.kakao.maps.MarkerImage(imageSrc, size)
+      marker.setImage(image);
+    })
+    window.kakao.maps.event.addListener(marker, 'mouseout', function() {
+      const size = new window.kakao.maps.Size(50, 50)
+      const image = new window.kakao.maps.MarkerImage(imageSrc, size)
+      marker.setImage(image)
+    })
+    window.kakao.maps.event.addListener(marker, 'dragstart', function() {
+      const size = new window.kakao.maps.Size(60, 60)
+      const image = new window.kakao.maps.MarkerImage(imageSrc, size)
+      marker.setImage(image);
+      setDraggingMarker(true);
+    })
+    window.kakao.maps.event.addListener(marker, 'dragend', function() {
+      const size = new window.kakao.maps.Size(50, 50)
+      const image = new window.kakao.maps.MarkerImage(imageSrc, size)
+      marker.setImage(image)
+      setDraggingMarker(false)
+      const location = marker.getPosition()
+      console.log('location: ', location)
+      // 위치 변경 API 실행
+    })
+  }
 
   useEffect(() => {
     let container = document.getElementById('map')
@@ -51,82 +81,50 @@ export default function MyTrip() {
     map = new window.kakao.maps.Map(container, options)
       
     for (const receipt of receiptsJson) {
-      const { location } = receipt
+      const { location, name } = receipt
+      console.log('name: ', name);
       const { lat, lng } = location
-      const imageSize = new window.kakao.maps.Size(24, 35)
+      const imageSize = new window.kakao.maps.Size(50, 50)
       const latlng = new window.kakao.maps.LatLng(lat, lng)
       const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
       const marker = new window.kakao.maps.Marker({
         map,
+        title: name,
         position: latlng,
         image : markerImage,
         draggable: true,
         clickable: true,
         zIndex: 5,
       })
-      window.kakao.maps.event.addListener(marker, 'click', function(e) {
-        setFormVisible(true);
-        setReceipt(receipt);
+      var customOverlay = new window.kakao.maps.CustomOverlay({
+          position: latlng,
+          content: name,   
       })
-      window.kakao.maps.event.addListener(marker, 'mouseover', function() {
-        const size = new window.kakao.maps.Size(29, 40)
-        const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-        marker.setImage(image);
-      })
-      window.kakao.maps.event.addListener(marker, 'mouseout', function() {
-        const size = new window.kakao.maps.Size(25, 35)
-        const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-        marker.setImage(image)
-      })
-      window.kakao.maps.event.addListener(marker, 'dragstart', function() {
-        const size = new window.kakao.maps.Size(29, 40)
-        const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-        marker.setImage(image);
-        setDraggingMarker(true);
-      })
-      window.kakao.maps.event.addListener(marker, 'dragend', function() {
-        const size = new window.kakao.maps.Size(24, 35)
-        const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-        marker.setImage(image)
-        setDraggingMarker(false)
-        const location = marker.getPosition()
-        console.log('location: ', location)
-      });
+      customOverlay.setMap(map)
+      setMarkerEvent(marker, receipt)
     }
-  }, []);
+  }, [])
 
-  const callback = (mouseEvent) => {
-    const imageSize = new window.kakao.maps.Size(24, 35)
+  const addMarkerCallback = (mouseEvent) => {
+    const imageSize = new window.kakao.maps.Size(50, 50)
     const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
     const latlng = mouseEvent.latLng
     const marker = new window.kakao.maps.Marker({ 
       position: latlng,
+      text: 'dfdf',
       image : markerImage,
       draggable: true,
       clickable: true,
       zIndex: 5,
     })
-    window.kakao.maps.event.addListener(marker, 'dragstart', function() {
-      const size = new window.kakao.maps.Size(29, 40)
-      const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-      marker.setImage(image);
-      setDraggingMarker(true);
-    })
-    window.kakao.maps.event.addListener(marker, 'dragend', function() {
-      const size = new window.kakao.maps.Size(24, 35)
-      const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-      marker.setImage(image)
-      setDraggingMarker(false)
-      const location = marker.getPosition()
-      console.log('location: ', location)
-    })
+    setMarkerEvent(marker, initialReceipt);
     marker.setMap(map)
   }
 
   const clickHandler = (e) => {
     setActiveMarker(false)
     setReceipt(initialReceipt)
-    callback(e)
+    addMarkerCallback(e)
   }
 
   const handleAddMarker = useCallback(() => {
