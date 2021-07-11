@@ -5,7 +5,10 @@ export default function ReceiptItem({ receiptItems }) {
   return (receiptItems.length !== 0 && (
     <div className={styles.wrapper}>
       {receiptItems.map((item, index) => (
-        <div className={styles.item_wrapper}>
+        <div
+          key={`receipt_item_${index}`}
+          className={styles.item_wrapper}
+        >
           <div className={styles.item_wrapper_label}>
             <span>
               {`영수증 내역 ${index + 1}`}

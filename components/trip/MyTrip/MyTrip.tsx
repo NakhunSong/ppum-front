@@ -24,9 +24,8 @@ export default function MyTrip() {
   const [receipt, setReceipt] = useState<Receipt>(initialReceipt)
 
   const handleCancelFormVisible = useCallback(() => {
-    console.log('cancel')
-    setFormVisible(false)
     setReceipt(initialReceipt)
+    setFormVisible(false)
   }, [])
 
   const handleAddReceiptItem = useCallback((e) => {

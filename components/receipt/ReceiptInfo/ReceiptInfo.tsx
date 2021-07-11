@@ -18,6 +18,8 @@ export default function ReceiptInfo({ receipt }) {
               borderRadius: '2px',
             }}
             placeholder="장소명"
+            value={receipt.name}
+            onChange={() => {}}
           />
         </Input.InputWrapper>
         <Input.InputWrapper>
@@ -28,6 +30,8 @@ export default function ReceiptInfo({ receipt }) {
               borderRadius: '2px',
             }}
             placeholder="총 금액"
+            value={receipt.prices}
+            onChange={() => {}}
           />
         </Input.InputWrapper>
       </div>

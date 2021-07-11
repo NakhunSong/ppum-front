@@ -4,13 +4,11 @@ export function useClickoutside(callback: Function) {
   const ref = useRef(null);
   const handleClickoutside = useCallback((e) => {
     if (ref.current && !ref.current.contains(e.target)) {
-      console.log('hi click');
       callback();
     }
   }, []);
   const handlePressEsc = useCallback((e) => {
     if (e.key === 'Escape') {
-      console.log('hi');
       callback();
     }
   }, []);
