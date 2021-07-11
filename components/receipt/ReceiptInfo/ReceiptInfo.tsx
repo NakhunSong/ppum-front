@@ -1,7 +1,7 @@
 import Input from 'components/common/Input'
 import styles from './ReceiptInfo.module.scss'
 
-export default function ReceiptInfo({ receipt }) {
+export default function ReceiptInfo({ receipt, onChange }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.wrapper_label}>
@@ -19,7 +19,7 @@ export default function ReceiptInfo({ receipt }) {
             }}
             placeholder="장소명"
             value={receipt.name}
-            onChange={() => {}}
+            onChange={(e) => onChange(e, 'name')}
           />
         </Input.InputWrapper>
         <Input.InputWrapper>
@@ -31,7 +31,7 @@ export default function ReceiptInfo({ receipt }) {
             }}
             placeholder="총 금액"
             value={receipt.prices}
-            onChange={() => {}}
+            onChange={(e) => onChange(e, 'prices')}
           />
         </Input.InputWrapper>
       </div>

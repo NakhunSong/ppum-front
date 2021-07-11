@@ -1,7 +1,7 @@
 import Input from 'components/common/Input'
 import styles from './ReceiptItem.module.scss'
 
-export default function ReceiptItem({ receiptItems }) {
+export default function ReceiptItem({ receiptItems, onChange }) {
   return (receiptItems.length !== 0 && (
     <div className={styles.wrapper}>
       {receiptItems.map((item, index) => (
@@ -24,7 +24,7 @@ export default function ReceiptItem({ receiptItems }) {
                   borderRadius: '2px',
                 }}
                 value={item.name}
-                onChange={() => {}}
+                onChange={(e) => onChange(e, 'name', item.id)}
               />
             </Input.InputWrapper>
             <Input.InputWrapper>
@@ -36,7 +36,7 @@ export default function ReceiptItem({ receiptItems }) {
                   borderRadius: '2px',
                 }}
                 value={item.prices}
-                onChange={() => {}}
+                onChange={(e) => onChange(e, 'prices', item.id)}
               />
             </Input.InputWrapper>
           </div>
