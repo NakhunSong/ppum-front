@@ -6,6 +6,7 @@ import receiptsJson from 'services/receipts.json'
 import ReceiptForm from "components/receipt/ReceiptForm"
 import { Receipt } from "types/ReceiptType"
 import { initialReceipt, initialReceiptItem } from "components/receipt/ReceiptForm/ReceiptForm"
+import TripDateSelector from "../TripDateSelector"
 
 declare global {
   interface Window {
@@ -158,6 +159,7 @@ export default function MyTrip() {
         onAdd={handleAddReceiptItem}
         onCancel={handleCancelFormVisible}
       />
+      <TripDateSelector />
     </MobileTemplate>
   )
 }

@@ -1,0 +1,34 @@
+@import 'base.scss';
+
+.wrapper {
+  position: relative;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.scroller {
+  position: absolute;
+  cursor: pointer;
+  overflow-x: scroll;
+  transition: all .2s ease;
+  white-space: nowrap;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.grab {
+  cursor: grabbing;
+  font-size: 18px;
+}
+
+.target {
+  position: absolute;
+  display: inline-block;
+  border: 2px solid black;
+  margin-left: 50%;
+  height: 200px;
+  width: 200px;
+}

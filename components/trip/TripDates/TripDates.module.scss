@@ -1,0 +1,24 @@
+@import 'base.scss';
+
+.item_wrapper {
+  border: 1px solid orange;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 50px;
+  height: 200px;
+  width: 200px;
+  user-select: none;
+
+  &:nth-child(1) {
+    margin-left: 50%;
+  }
+
+  &:nth-last-child(1) {
+    margin-right: 50%;
+  }
+}
+
+.active {
+  text-decoration: underline;
+}
