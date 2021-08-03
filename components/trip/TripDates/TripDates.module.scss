@@ -9,6 +9,7 @@
   height: 200px;
   width: 200px;
   user-select: none;
+  transform: translateX(-50%);
 
   &:nth-child(1) {
     margin-left: 50%;
