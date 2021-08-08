@@ -1,13 +1,14 @@
 @import 'base.scss';
 
 .item_wrapper {
-  border: 1px solid orange;
+  // border: 1px solid orange;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 50px;
-  height: 200px;
-  width: 200px;
+  margin-right: 30px;
+  height: 70px;
+  width: 60px;
+  font-size: 64px;
   user-select: none;
   transform: translateX(-50%);
 
@@ -20,6 +21,6 @@
   }
 }
 
-.active {
+.selected {
   text-decoration: underline;
 }

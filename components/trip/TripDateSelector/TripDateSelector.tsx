@@ -14,15 +14,15 @@ export default function TripDateSelector() {
   const $scroller = useRef<HTMLDivElement>()
   const itemsRef = useRef([])
 
-  const [selectedDate, setSelectedDate] = useState(null)
-
-  const scrollToHorizontal = (walk) => {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  
+  const scrollToHorizontal = useCallback((walk) => {
     if (!$scroller) return
-    $scroller.current?.scrollTo({
+    $scroller.current.scrollTo({
       behavior: 'smooth',
       left: walk,
     })
-  }
+  }, [])
 
   const moveCenter = useCallback((focusedItem) => {
     if (!focusedItem) return
@@ -38,22 +38,46 @@ export default function TripDateSelector() {
     } = $target?.current.getClientRects()[0] ?? {}
     let leftItem
     let rightItem
+    let leftItemIndex
+    let rightItemIndex
     let leftCollapse = 0
     let rightCollapse = 0
-    itemsRef.current.forEach((item) =>  {
+    let isSame = false
+    itemsRef.current.forEach((item, index) =>  {
       const { left, right } = item.getClientRects()[0]
       if (left < targetLeft && targetLeft < right) {
         leftItem = item
+        leftItemIndex = index
         leftCollapse = Math.abs(right - targetLeft)
       } else if (left < targetRight && targetRight < right) {
         rightItem = item
+        rightItemIndex = index
         rightCollapse = Math.abs(left - targetRight)
+      } else {
+        if (left === targetLeft && right === targetRight) {
+          isSame = true
+        }
       }
     })
-    if (leftCollapse > rightCollapse) {
-      return leftItem
+    const itemsLength = itemsRef.current.length
+    if (leftCollapse === 0 && rightCollapse === 0) {
+      if (!isSame) {
+        setSelectedIndex(itemsLength - 1)
+        return itemsRef.current[itemsLength - 1]
+      } else {
+        if ($scroller.current.scrollLeft  === 0) {
+          setSelectedIndex(0)
+        }
+      }
+      return null
     } else {
-      return rightItem
+      if (leftCollapse > rightCollapse) {
+        setSelectedIndex(leftItemIndex)
+        return leftItem
+      } else {
+        setSelectedIndex(rightItemIndex)
+        return rightItem
+      }
     }
   }, [])
 
@@ -66,8 +90,6 @@ export default function TripDateSelector() {
   }, [])
 
   useEffect(() => {
-    setSelectedDate(tripDates[0].date)
-
     $scroller.current.onmousedown = function(event) {
       startX = event.pageX - $scroller.current.offsetLeft
       scrollLeft = $scroller.current.scrollLeft
@@ -88,9 +110,10 @@ export default function TripDateSelector() {
     }
 
     $scroller.current.onscroll = _.debounce(function() {
+      console.log('scroll')
       const focusedItem = getClosest()
       moveCenter(focusedItem)
-    }, 200)
+    }, 500)
   }, [])
 
   return (
@@ -99,13 +122,14 @@ export default function TripDateSelector() {
       <div className={styles.scroller} ref={$scroller}>
         {tripDates.map((tripDate, index) => {
           const { date } = tripDate
-          // const selected = selectedDate === date
+          const selected = selectedIndex === index
           const dateInfo = date.split('-');
           const day = dateInfo?.[2];
           return (
             <TripDates
               key={`trip_date_${index}`}
               data={day}
+              selected={selected}
               ref={(el) => itemsRef.current[index] = el}
             />
           )
