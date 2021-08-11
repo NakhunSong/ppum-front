@@ -2,7 +2,7 @@
 // import monthMapper from 'config/constant/month.json'
 import tripDates from 'services/trip-dates.json'
 import TripDates from '../TripDates'
-import ScrollBox, { useScrollBox } from '../ScrollBox'
+import Scroller, { useScrollBox } from '../Scroller'
 
 export default function TripDateSelector() {
   const {
@@ -13,7 +13,7 @@ export default function TripDateSelector() {
   } = useScrollBox();
 
   return (
-    <ScrollBox
+    <Scroller
       targetRef={$target}
       scrollerRef={$scroller}
     >
@@ -23,14 +23,23 @@ export default function TripDateSelector() {
         const dateInfo = date.split('-');
         const day = dateInfo?.[2];
         return (
-          <TripDates
+          <Scroller.item
             key={`trip_date_${index}`}
-            data={day}
             selected={selected}
             ref={(el) => $items.current[index] = el}
-          />
+          >
+            <div style={{ fontSize: '64px' }}>
+              {day}
+            </div>
+          </Scroller.item>
+          // <TripDates
+          //   key={`trip_date_${index}`}
+          //   data={day}
+          //   selected={selected}
+          //   ref={(el) => $items.current[index] = el}
+          // />
         )
       })}
-    </ScrollBox>
+    </Scroller>
   )
 }

@@ -1,2 +1,2 @@
-export { default } from './ScrollBox'
+export { default } from './Scroller'
 export { useScrollBox } from './useScrollBox'
