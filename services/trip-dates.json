@@ -2,12 +2,178 @@
   {
       "id": "01bfd534-87c5-4072-848f-f76355bb0c6d",
       "date": "2020-10-10",
-      "receipts": []
+      "receipts": [  
+        {
+          "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f31",
+          "location": {
+            "lat": 33.450705,
+            "lng": 126.570677
+          },
+          "name": "편의점",
+          "prices": 24000,
+          "receiptItems": [
+            {
+              "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+              "name": "과자",
+              "price": 4000,
+              "prices": 12000,
+              "users": [
+                {
+                    "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+                    "username": "test2@test.com",
+                    "displayname": "test2",
+                    "password": "1234"
+                }
+              ]
+            },
+            {
+              "id": "a12db469-b7c6-4a26-821e-dc2132dc9e52",
+              "name": "음료수",
+              "price": 6000,
+              "prices": 12000,
+              "users": [
+                {
+                    "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+                    "username": "test2@test.com",
+                    "displayname": "test2",
+                    "password": "1234"
+                },
+                {
+                    "id": "4a484c8d-4ad8-4c2c-b36c-f58a165c3d50",
+                    "username": "test@test.com",
+                    "displayname": "test",
+                    "password": "1234"
+                },
+                {
+                    "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+                    "username": "test4@test.com",
+                    "displayname": "test4",
+                    "password": "1234"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f32",
+          "location": {
+            "lat": 33.450936,
+            "lng": 126.569477
+          },
+          "name": "편의점2",
+          "prices": 8000,
+          "receiptItems": [
+            {
+              "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+              "name": "젤리",
+              "price": 4000,
+              "prices": 8000,
+              "users": [
+                {
+                    "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+                    "username": "test2@test.com",
+                    "displayname": "test2",
+                    "password": "1234"
+                },
+                {
+                    "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+                    "username": "test4@test.com",
+                    "displayname": "test4",
+                    "password": "1234"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f33",
+          "location": {
+            "lat": 33.450879,
+            "lng": 126.569940
+          },
+          "name": "편의점3",
+          "prices": 9000,
+          "receiptItems": [
+            {
+              "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+              "name": "아이스크림",
+              "price": 3000,
+              "prices": 9000,
+              "users": [
+                {
+                    "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+                    "username": "test2@test.com",
+                    "displayname": "test2",
+                    "password": "1234"
+                },
+                {
+                    "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+                    "username": "test4@test.com",
+                    "displayname": "test4",
+                    "password": "1234"
+                }
+              ]
+            }
+          ]
+        }
+      ]
   },
   {
       "id": "0719b452-846e-4b7e-9967-1f70498e52d9",
       "date": "2020-10-11",
-      "receipts": []
+      "receipts": [  
+        {
+          "id": "0b1fca73-25c1-4bf6-8ef5-05f70f1c73f31",
+          "location": {
+            "lat": 33.450705,
+            "lng": 126.570677
+          },
+          "name": "마트",
+          "prices": 24000,
+          "receiptItems": [
+            {
+              "id": "5864ee7e-d937-410b-b5b2-088c8ab2a7c2",
+              "name": "과자",
+              "price": 4000,
+              "prices": 12000,
+              "users": [
+                {
+                    "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+                    "username": "test2@test.com",
+                    "displayname": "test2",
+                    "password": "1234"
+                }
+              ]
+            },
+            {
+              "id": "a12db469-b7c6-4a26-821e-dc2132dc9e52",
+              "name": "음료수",
+              "price": 6000,
+              "prices": 12000,
+              "users": [
+                {
+                    "id": "067f3ce9-a648-4d16-a4ba-e5c75facc0ec",
+                    "username": "test2@test.com",
+                    "displayname": "test2",
+                    "password": "1234"
+                },
+                {
+                    "id": "4a484c8d-4ad8-4c2c-b36c-f58a165c3d50",
+                    "username": "test@test.com",
+                    "displayname": "test",
+                    "password": "1234"
+                },
+                {
+                    "id": "dc7377d5-bdb9-49df-8f5b-5a271fe31af8",
+                    "username": "test4@test.com",
+                    "displayname": "test4",
+                    "password": "1234"
+                }
+              ]
+            }
+          ]
+        }
+      ]
   },
   {
       "id": "0719b452-846e-4b7e-9967-1f70498e52da",
@@ -17,61 +183,6 @@
   {
       "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
       "date": "2020-10-13",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-14",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-15",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-16",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-17",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-18",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-19",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-20",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-21",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-22",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-23",
-      "receipts": []
-  },
-  {
-      "id": "0719b452-846e-4b7e-9967-1f70498e52dc",
-      "date": "2020-10-24",
       "receipts": []
   }
 ]

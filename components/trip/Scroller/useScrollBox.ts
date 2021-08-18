@@ -7,9 +7,8 @@ export function useScrollBox() {
   const $target = useRef<null | HTMLDivElement>()
   const $scroller = useRef<HTMLDivElement>()
   const $items = useRef([])
-
   const [selectedIndex, setSelectedIndex] = useState(0)
-  
+
   const scrollToHorizontal = useCallback((walk) => {
     if (!$scroller) return
     $scroller.current.scrollTo({
@@ -18,10 +17,12 @@ export function useScrollBox() {
     })
   }, [])
 
-  const moveCenter = useCallback((focusedItem) => {
-    if (!focusedItem) return
+  const moveCenter = useCallback((focusedInfo) => {
+    const { item, index } = focusedInfo
+    setSelectedIndex(index)
+    if (!item) return
     const firstItemLeft = $items.current[0].getClientRects()[0].left
-    const walk = Math.round(focusedItem.getClientRects()[0].left - firstItemLeft)
+    const walk = Math.round(item.getClientRects()[0].left - firstItemLeft)
     scrollToHorizontal(walk)
   }, [])
 
@@ -37,6 +38,8 @@ export function useScrollBox() {
     let leftCollapse = 0
     let rightCollapse = 0
     let isSame = false
+    let returnIndex = selectedIndex
+    let returnItem = null
     $items.current.forEach((item, index) =>  {
       const { left, right } = item.getClientRects()[0]
       if (left < targetLeft && targetLeft < right) {
@@ -56,24 +59,24 @@ export function useScrollBox() {
     const itemsLength = $items.current.length
     if (leftCollapse === 0 && rightCollapse === 0) {
       if (!isSame) {
-        setSelectedIndex(itemsLength - 1)
-        return $items.current[itemsLength - 1]
+        returnIndex = itemsLength - 1
+        returnItem = $items.current[returnIndex]
       } else {
         if ($scroller.current.scrollLeft  === 0) {
-          setSelectedIndex(0)
+          returnIndex = 0
         }
       }
-      return null
     } else {
       if (leftCollapse > rightCollapse) {
-        setSelectedIndex(leftItemIndex)
-        return leftItem
+        returnItem = leftItem
+        returnIndex = leftItemIndex
       } else {
-        setSelectedIndex(rightItemIndex)
-        return rightItem
+        returnItem = rightItem
+        returnIndex = rightItemIndex
       }
     }
-  }, [])
+    return { item: returnItem, index: returnIndex }
+  }, [selectedIndex])
 
   const handleMouseMove = useCallback((event) => {
     event.preventDefault()

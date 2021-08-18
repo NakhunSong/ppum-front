@@ -1,10 +1,23 @@
-import type { AppProps /*, AppContext */ } from 'next/app';
-import Head from 'next/head';
-import Layout from 'components/base/Layout';
+import type { AppProps /*, AppContext */ } from 'next/app'
+import Head from 'next/head'
+import Layout from 'components/base/Layout'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import 'styles/global.scss'
+
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
+    
+   <QueryClientProvider client={queryClient}>
     <Layout>
       <Head>
         <link
@@ -13,7 +26,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <Component {...pageProps} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </Layout>
+   </QueryClientProvider>
   );
 }
 

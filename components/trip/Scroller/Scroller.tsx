@@ -7,7 +7,6 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
-  margin-top: 40px;
 `
 
 const ScrollerWrapper = styled.div`
@@ -41,7 +40,7 @@ const ScrollerItemWrapper = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 30px;
+  margin-right: ${(props) => props.gap};
   user-select: none;
   transform: translateX(-50%);
 
@@ -86,15 +85,21 @@ export default function Scroller({
 type ScrollerItemProps = {
   children: ReactElement;
   selected: boolean;
+  gap?: string;
 }
 
-const ScrollerItem = forwardRef((props: any, ref: any) => {
-  const { children, selected } = props
+const ScrollerItem = forwardRef((props: ScrollerItemProps, ref: any) => {
+  const {
+    children,
+    selected,
+    gap = '30px',
+  } = props
   return (
     <ScrollerItemWrapper
       className="scroller_item"
       ref={ref}
       selected={selected}
+      gap ={gap}
     >
       {children}
     </ScrollerItemWrapper>

@@ -1,12 +1,15 @@
 import MobileTemplate from "components/template/MobileTemplate"
 import { useCallback, useEffect, useState } from "react"
+import ReceiptForm from "components/receipt/ReceiptForm"
+import { initialReceipt, initialReceiptItem } from "components/receipt/ReceiptForm/ReceiptForm"
+import { Receipt } from "types/ReceiptType"
+import ReceiptSelector from "components/receipt/ReceiptSelector"
+import receiptsJson from 'services/receipts.json'
+import tripDatesJson from 'services/trip-dates.json'
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
-import receiptsJson from 'services/receipts.json'
-import ReceiptForm from "components/receipt/ReceiptForm"
-import { Receipt } from "types/ReceiptType"
-import { initialReceipt, initialReceiptItem } from "components/receipt/ReceiptForm/ReceiptForm"
 import TripDateSelector from "../TripDateSelector"
+import { useTripDate } from "hooks/useTripDate"
 
 declare global {
   interface Window {
@@ -23,6 +26,12 @@ export default function MyTrip() {
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [receipt, setReceipt] = useState<Receipt>(initialReceipt)
+  const [tripDateId, setTripDateId] = useState(0)
+
+  const {
+    data: receipts = [],
+    isLoading,
+  } = useTripDate(tripDateId)
 
   const handleCancelFormVisible = useCallback(() => {
     setReceipt(initialReceipt)
@@ -159,7 +168,12 @@ export default function MyTrip() {
         onAdd={handleAddReceiptItem}
         onCancel={handleCancelFormVisible}
       />
-      <TripDateSelector />
+      {isLoading
+        ? <span>로딩중...</span>
+        : (
+        <ReceiptSelector receipts={receipts} />
+      )}
+      <TripDateSelector tripDates={tripDatesJson} setTripDateId={setTripDateId} />
     </MobileTemplate>
   )
 }
