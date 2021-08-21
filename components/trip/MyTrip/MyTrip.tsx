@@ -1,16 +1,14 @@
 import MobileTemplate from "components/template/MobileTemplate"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import ReceiptForm from "components/receipt/ReceiptForm"
 import { initialReceipt, initialReceiptItem } from "components/receipt/ReceiptForm/ReceiptForm"
 import { Receipt } from "types/ReceiptType"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
-import receiptsJson from 'services/receipts.json'
 import tripDatesJson from 'services/trip-dates.json'
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
 import TripDateSelector from "../TripDateSelector"
 import { useTripDate } from "hooks/useTripDate"
-import { useQuery } from "react-query"
 
 declare global {
   interface Window {
@@ -21,12 +19,12 @@ declare global {
 const imageSrc = "/images/trip/marker_selected.svg"
 
 export default function MyTrip() {
-  let map
-
+  const map = useRef()
+  const info = useRef(null)
   const [activeMarker, setActiveMarker] = useState(false)
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
-  const [receipt, setReceipt] = useState<Receipt>(initialReceipt)
+  const [receiptForm, setReceiptForm] = useState<Receipt>(initialReceipt)
   const [selectedReceipt, setSelectedReceipt] = useState<Receipt>(null)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
@@ -36,13 +34,13 @@ export default function MyTrip() {
   } = useTripDate(tripDateIndex)
 
   const handleCancelFormVisible = useCallback(() => {
-    setReceipt(initialReceipt)
+    setReceiptForm(initialReceipt)
     setFormVisible(false)
   }, [])
 
   const handleAddReceiptItem = useCallback((e) => {
     e.preventDefault();
-    setReceipt(r => ({
+    setReceiptForm(r => ({
       ...r,
       receiptItems: [
         ...r.receiptItems,
@@ -54,7 +52,7 @@ export default function MyTrip() {
   const setMarkerEvent = useCallback((marker, receiptProp) => {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
       setTimeout(() => setFormVisible(true), 0);
-      setReceipt(receiptProp);
+      setReceiptForm(receiptProp);
     })
     window.kakao.maps.event.addListener(marker, 'mouseover', function() {
       const size = new window.kakao.maps.Size(60, 60)
@@ -83,22 +81,37 @@ export default function MyTrip() {
     })
   }, [])
 
+  const setMarkerName = useCallback(({ position, name }) => {
+    if (info.current) {
+      info.current.setMap(null)
+      info.current = null
+    }
+    info.current = new window.kakao.maps.CustomOverlay({
+      position,
+      content: `<span style="font-weight: 600">${name}</span>`,
+      map: map.current,
+    })
+  }, [])
+
   useEffect(() => {
+    console.log('mounted')
     const container = document.getElementById('map')
     const options = {
       center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-      level: 3 //지도 확대, 축소 정도
+      level: 3,
     }
-    map = new window.kakao.maps.Map(container, options)
+    map.current = new window.kakao.maps.Map(container, options)
+  }, [])
 
-    for (const receipt of receipts) {
+  useEffect(() => {
+    receipts.forEach((receipt, index) => {
       const { location, name } = receipt
       const { lat, lng } = location
       const imageSize = new window.kakao.maps.Size(50, 50)
       const latlng = new window.kakao.maps.LatLng(lat, lng)
       const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
       const marker = new window.kakao.maps.Marker({
-        map,
+        map: map.current,
         title: name,
         position: latlng,
         image : markerImage,
@@ -106,18 +119,25 @@ export default function MyTrip() {
         clickable: true,
         zIndex: 5,
       })
-      new window.kakao.maps.CustomOverlay({
-        position: latlng,
-        content: name,
-        map,
-      })
+      if (index === 0) {
+        setMarkerName({
+          position: latlng,
+          name,
+        })
+      }
       setMarkerEvent(marker, receipt)
-    }
+    });
   }, [receipts])
 
   useEffect(() => {
     if (selectedReceipt) {
-      // update marker status
+      const { location, name } = selectedReceipt
+      const { lat, lng } = location
+      const latlng = new window.kakao.maps.LatLng(lat, lng)
+      setMarkerName({
+        position: latlng,
+        name,
+      })
     }
   }, [selectedReceipt])
 
@@ -134,23 +154,23 @@ export default function MyTrip() {
       zIndex: 5,
     })
     setMarkerEvent(marker, initialReceipt);
-    marker.setMap(map)
+    marker.setMap(map.current)
   }
 
   const clickHandler = (e) => {
     setActiveMarker(false)
-    setReceipt(initialReceipt)
+    setReceiptForm(initialReceipt)
     addMarkerCallback(e)
   }
 
   const handleAddMarker = useCallback(() => {
     setActiveMarker(true)
-    window.kakao.maps.event.addListener(map, 'click', clickHandler)
+    window.kakao.maps.event.addListener(map.current, 'click', clickHandler)
   }, [])
   
   const handleAddOff = useCallback(() => {
     setActiveMarker(false)
-    window.kakao.maps.event.removeListener(map, 'click', clickHandler)
+    window.kakao.maps.event.removeListener(map.current, 'click', clickHandler)
   }, [])
   
   useEffect(() => {
@@ -170,7 +190,7 @@ export default function MyTrip() {
     >
       <KakaoMap draggingMarker={draggingMarker} />
       <ReceiptForm
-        receipt={receipt}
+        receipt={receiptForm}
         visible={formVisible}
         onAdd={handleAddReceiptItem}
         onCancel={handleCancelFormVisible}
