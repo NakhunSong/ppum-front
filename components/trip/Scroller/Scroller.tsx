@@ -53,7 +53,7 @@ const ScrollerItemWrapper = styled.div`
   }
 
   ${(props) => props.selected && `
-    text-decoration: underline;
+    font-weight: 600;
   `}
 `
 
@@ -106,4 +106,4 @@ const ScrollerItem = forwardRef((props: ScrollerItemProps, ref: any) => {
   )
 })
 
-Scroller.item = ScrollerItem
+Scroller.Item = ScrollerItem

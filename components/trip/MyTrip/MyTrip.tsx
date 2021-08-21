@@ -10,6 +10,7 @@ import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
 import TripDateSelector from "../TripDateSelector"
 import { useTripDate } from "hooks/useTripDate"
+import { useQuery } from "react-query"
 
 declare global {
   interface Window {
@@ -21,17 +22,18 @@ const imageSrc = "/images/trip/marker_selected.svg"
 
 export default function MyTrip() {
   let map
-  
+
   const [activeMarker, setActiveMarker] = useState(false)
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [receipt, setReceipt] = useState<Receipt>(initialReceipt)
-  const [tripDateId, setTripDateId] = useState(0)
+  const [selectedReceipt, setSelectedReceipt] = useState<Receipt>(null)
+  const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
   const {
     data: receipts = [],
     isLoading,
-  } = useTripDate(tripDateId)
+  } = useTripDate(tripDateIndex)
 
   const handleCancelFormVisible = useCallback(() => {
     setReceipt(initialReceipt)
@@ -49,7 +51,7 @@ export default function MyTrip() {
     }))
   }, [])
 
-  const setMarkerEvent = (marker, receiptProp) => {
+  const setMarkerEvent = useCallback((marker, receiptProp) => {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
       setTimeout(() => setFormVisible(true), 0);
       setReceipt(receiptProp);
@@ -79,19 +81,18 @@ export default function MyTrip() {
       console.log('location: ', location)
       // 위치 변경 API 실행
     })
-  }
+  }, [])
 
   useEffect(() => {
-    let container = document.getElementById('map')
-    let options = {
+    const container = document.getElementById('map')
+    const options = {
       center: new window.kakao.maps.LatLng(33.450701, 126.570667),
       level: 3 //지도 확대, 축소 정도
     }
     map = new window.kakao.maps.Map(container, options)
-      
-    for (const receipt of receiptsJson) {
+
+    for (const receipt of receipts) {
       const { location, name } = receipt
-      console.log('name: ', name);
       const { lat, lng } = location
       const imageSize = new window.kakao.maps.Size(50, 50)
       const latlng = new window.kakao.maps.LatLng(lat, lng)
@@ -105,14 +106,20 @@ export default function MyTrip() {
         clickable: true,
         zIndex: 5,
       })
-      var customOverlay = new window.kakao.maps.CustomOverlay({
-          position: latlng,
-          content: name,   
+      new window.kakao.maps.CustomOverlay({
+        position: latlng,
+        content: name,
+        map,
       })
-      customOverlay.setMap(map)
       setMarkerEvent(marker, receipt)
     }
-  }, [])
+  }, [receipts])
+
+  useEffect(() => {
+    if (selectedReceipt) {
+      // update marker status
+    }
+  }, [selectedReceipt])
 
   const addMarkerCallback = (mouseEvent) => {
     const imageSize = new window.kakao.maps.Size(50, 50)
@@ -171,9 +178,9 @@ export default function MyTrip() {
       {isLoading
         ? <span>로딩중...</span>
         : (
-        <ReceiptSelector receipts={receipts} />
+        <ReceiptSelector receipts={receipts} setSelectedReceipt={setSelectedReceipt} />
       )}
-      <TripDateSelector tripDates={tripDatesJson} setTripDateId={setTripDateId} />
+      <TripDateSelector tripDates={tripDatesJson} setTripDateIndex={setTripDateIndex} />
     </MobileTemplate>
   )
 }

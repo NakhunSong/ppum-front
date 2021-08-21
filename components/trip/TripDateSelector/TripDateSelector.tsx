@@ -2,18 +2,23 @@
 // import monthMapper from 'config/constant/month.json'
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import Scroller, { useScrollBox } from '../Scroller'
+import Scroller, { useScroller } from '../Scroller'
 
-export default function TripDateSelector({ tripDates, setTripDateId }) {
+type TripDateSelectorProps = {
+  tripDates: Array<any>,
+  setTripDateIndex: React.Dispatch<number>,
+}
+
+export default function TripDateSelector({ tripDates, setTripDateIndex }: TripDateSelectorProps) {
   const {
     $target,
     $scroller,
     $items,
     selectedIndex,
-  } = useScrollBox()
+  } = useScroller()
   
   useEffect(() => {
-    setTripDateId(selectedIndex)
+    setTripDateIndex(selectedIndex)
   }, [selectedIndex])
 
   const queryClient = useQueryClient()
@@ -33,18 +38,19 @@ export default function TripDateSelector({ tripDates, setTripDateId }) {
       {tripDates.map((tripDate, index) => {
         const { date } = tripDate
         const selected = selectedIndex === index
-        const dateInfo = date.split('-');
-        const day = dateInfo?.[2];
+        const dateInfo = date.split('-')
+        const day = dateInfo?.[2]
+        const ref = (el) => $items.current[index] = el
         return (
-          <Scroller.item
+          <Scroller.Item
             key={`trip_date_${index}`}
+            ref={ref}
             selected={selected}
-            ref={(el) => $items.current[index] = el}
           >
             <div style={{ fontSize: '64px' }}>
               {day}
             </div>
-          </Scroller.item>
+          </Scroller.Item>
         )
       })}
     </Scroller>

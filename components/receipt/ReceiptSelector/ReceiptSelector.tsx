@@ -1,17 +1,23 @@
-import Scroller, { useScrollBox } from 'components/trip/Scroller'
+import Scroller, { useScroller } from 'components/trip/Scroller'
+import { useEffect } from 'react'
 import styles from './ReceiptSelector.module.scss'
 
 type ReceiptSelectorProps = {
   receipts: Array<any>,
+  setSelectedReceipt: React.Dispatch<Object>,
 }
 
-export default function ReceiptSelector({ receipts }: ReceiptSelectorProps) {
+export default function ReceiptSelector({ receipts, setSelectedReceipt }: ReceiptSelectorProps) {
   const {
     $target,
     $scroller,
     $items,
     selectedIndex,
-  } = useScrollBox()
+  } = useScroller()
+
+  useEffect(() => {
+    setSelectedReceipt(receipts?.[selectedIndex] ?? null)
+  }, [selectedIndex])
 
   return (
     <Scroller
@@ -21,10 +27,11 @@ export default function ReceiptSelector({ receipts }: ReceiptSelectorProps) {
       {receipts.map((receipt, index) => {
         const selected = selectedIndex === index
         const { name, prices } = receipt
+        const ref = (el) => $items.current[index] = el
         return (
-          <Scroller.item
+          <Scroller.Item
             key={`receipt_item_${index}`}
-            ref={(el) => $items.current[index] = el}
+            ref={ref}
             selected={selected}
             gap="64px"
           >
@@ -36,7 +43,7 @@ export default function ReceiptSelector({ receipts }: ReceiptSelectorProps) {
                 {prices}
               </div>
             </div>
-          </Scroller.item>
+          </Scroller.Item>
         )
       })}
     </Scroller>
