@@ -5,7 +5,7 @@
   border: 1px solid transparent;
   border-radius: $border-radius;
   font-size: 16px;
-  padding: 5px;
+  padding: 6px 8px;
   width: 100%;
 
   &:focus {
@@ -16,8 +16,9 @@
 
 .wrapper {
   width: 100%;
+  display: flex;
 }
 
-.margin__bottom {
+.margin_bottom {
   margin-bottom: 4px;
 }

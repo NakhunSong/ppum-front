@@ -25,6 +25,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
           rel="stylesheet"
         />
+        <script
+          type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0fa94e46e0de5881de8ccdf1e9fb52ce&libraries=services,clusterer,drawing"
+        />
       </Head>
       <Component {...pageProps} />
       <ReactQueryDevtools initialIsOpen={false} />

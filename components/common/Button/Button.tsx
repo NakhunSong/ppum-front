@@ -1,8 +1,14 @@
-import styles from './Button.module.scss';
+import { EventHandler } from 'react'
+import styles from './Button.module.scss'
 
-export default function Button({ children }) {
+type ButtonProps = {
+  children: any,
+  onClick?: EventHandler<any>,
+}
+
+export default function Button({ children, onClick }: ButtonProps) {
   return (
-    <button className={styles.wrapper}>
+    <button className={styles.wrapper} onClick={onClick}>
       {children}
     </button>
   )

@@ -1,21 +1,26 @@
-import Logo from "components/base/Logo";
-import Button from "components/common/Button";
-import Input from "components/common/Input";
-// import { Wrapper } from "components/common/Input/Input";
-import { useCallback, useState } from "react";
-import styles from './LoginForm.module.scss';
+import Logo from 'components/base/Logo'
+import Button from 'components/common/Button'
+import Input from 'components/common/Input'
+import { useRouter } from 'next/dist/client/router'
+import { useCallback, useState } from 'react'
+import styles from './LoginForm.module.scss'
 
 function useInput(initValue) {
-  const [input, setInput] = useState(initValue);
+  const [input, setInput] = useState(initValue)
   const handleInput = useCallback(e => {
-    setInput(() => e.target.value);
+    setInput(() => e.target.value)
   }, [])
-  return [input, handleInput];
+  return [input, handleInput]
 }
 
 export default function LoginForm() {
-  const [email, handleEmail] = useInput('');
-  const [password, handlePassword] = useInput('');
+  const router = useRouter()
+  const [email, handleEmail] = useInput('test@test.com')
+  const [password, handlePassword] = useInput('test1234')
+
+  const handleLogin = useCallback(() => {
+    router.push('/trips/2')
+  }, [])
 
   return (
     <div className={styles.wrapper}>
@@ -29,13 +34,14 @@ export default function LoginForm() {
         </Input.InputWrapper>
         <Input.InputWrapper marginBottom>
           <Input
+            type="password"
             value={password}
             onChange={handlePassword}
           />
+          <Button onClick={handleLogin}>로그인</Button>
         </Input.InputWrapper>
-        <Button>로그인</Button>
         <div className={styles.guide}>'뿜'이 처음이신가요?</div>
       </div>
     </div>
-  );
+  )
 }
