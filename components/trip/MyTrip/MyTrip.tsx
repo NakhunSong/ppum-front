@@ -21,6 +21,7 @@ const imageSrc = "/images/trip/marker_selected.svg"
 export default function MyTrip() {
   const map = useRef()
   const info = useRef(null)
+  const markers = useRef([])
   const [activeMarker, setActiveMarker] = useState(false)
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
@@ -81,16 +82,22 @@ export default function MyTrip() {
     })
   }, [])
 
-  const setMarkerName = useCallback(({ position, name }) => {
+  const initMarkerName = useCallback(() => {
     if (info.current) {
       info.current.setMap(null)
       info.current = null
     }
-    info.current = new window.kakao.maps.CustomOverlay({
-      position,
-      content: `<span style="font-weight: 600">${name}</span>`,
-      map: map.current,
-    })
+  }, [])
+
+  const setMarkerName = useCallback(({ position, name }) => {
+    initMarkerName()
+    if (position && name) {
+      info.current = new window.kakao.maps.CustomOverlay({
+        position,
+        content: `<span style="font-weight: 600">${name}</span>`,
+        map: map.current,
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -104,29 +111,39 @@ export default function MyTrip() {
   }, [])
 
   useEffect(() => {
-    receipts.forEach((receipt, index) => {
-      const { location, name } = receipt
-      const { lat, lng } = location
-      const imageSize = new window.kakao.maps.Size(50, 50)
-      const latlng = new window.kakao.maps.LatLng(lat, lng)
-      const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
-      const marker = new window.kakao.maps.Marker({
-        map: map.current,
-        title: name,
-        position: latlng,
-        image : markerImage,
-        draggable: true,
-        clickable: true,
-        zIndex: 5,
+    if (markers.current.length > 0) {
+      markers.current.forEach((mark) => {
+        mark?.setMap(null)
       })
-      if (index === 0) {
-        setMarkerName({
+    }
+    if (receipts?.length > 0) {
+      receipts.forEach((receipt, index) => {
+        const { location, name } = receipt
+        const { lat, lng } = location
+        const imageSize = new window.kakao.maps.Size(50, 50)
+        const latlng = new window.kakao.maps.LatLng(lat, lng)
+        const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
+        const marker = new window.kakao.maps.Marker({
+          map: map.current,
+          title: name,
           position: latlng,
-          name,
+          image : markerImage,
+          draggable: true,
+          clickable: true,
+          zIndex: 5,
         })
-      }
-      setMarkerEvent(marker, receipt)
-    });
+        markers.current.push(marker)
+        if (index === 0) {
+          setMarkerName({
+            position: latlng,
+            name,
+          })
+        }
+        setMarkerEvent(marker, receipt)
+      });
+    } else {
+      initMarkerName()
+    }
   }, [receipts])
 
   useEffect(() => {
