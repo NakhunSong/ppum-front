@@ -22,8 +22,8 @@ export default function TripSelectSection() {
       prevYear: calendar.prevYear,
       prevMonth: calendar.prevMonth,
       prevDays: calendar.prevDays,
-      nextYear: calendar.prevYear,
-      nextMonth: calendar.prevMonth,
+      nextYear: calendar.nextYear,
+      nextMonth: calendar.nextMonth,
     });
     setDateArray(() => array)
     if (calendar.start && !calendar.end) {

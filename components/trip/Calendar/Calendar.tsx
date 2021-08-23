@@ -4,6 +4,7 @@ import classNames from "classnames"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleUp, faAngleDown } from "@fortawesome/free-solid-svg-icons"
 import styles from './Calendar.module.scss'
+import { combineDateInfo } from "lib/helpers/trip/calendar"
 
 interface CalendarItemProps {
   children: JSX.Element,
@@ -11,6 +12,7 @@ interface CalendarItemProps {
   selected?: string,
   start?: boolean,
   end?: boolean,
+  between?: boolean,
   onClick: React.MouseEventHandler<HTMLDivElement>,
 }
 
@@ -23,18 +25,25 @@ function CalendarItem({
   selected,
   start,
   end,
+  between,
   onClick,
 }: CalendarItemProps) {
   return (
-    <div className={classNames(styles.calendar_item, {
-      [styles.gray]: context !== 'current',
-      [styles.selected]: selected,
-      [styles.start]: start,
-      [styles.end]: end,
+    <div className={classNames(styles.calendar_item_wrapper, {
+      [styles.calendar_item_start]: start,
+      [styles.calendar_item_end]: end,
+      [styles.calendar_item_between]: between,
     })}
       onClick={onClick}
     >
-      {children}
+      <div className={classNames(styles.calendar_item, {
+        [styles.gray]: context !== 'current',
+        [styles.selected]: selected,
+        [styles.start]: start,
+        [styles.end]: end,
+      })}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -81,18 +90,22 @@ export default function Calendar({
         </div>
         <div className={styles.calendar_main_body}>
           {dateArray.map((item, index) => {
-            const isStartMonthEqual = item.month === calendar?.start?.month
-            const isStartYearEqual = item.year === calendar?.start?.year
-            const isStartDateEqual = item.date === calendar?.start?.date
-            const isEndMonthEqual = item.month === calendar?.end?.month
-            const isEndYearEqual = item.year === calendar?.end?.year
-            const isEndDateEqual = item.date === calendar?.end?.date
+            const { date: startD, month: startM, year: startY } = calendar?.start ?? {}
+            const { date: endD, month: endM, year: endY } = calendar?.end ?? {}
+            const { date: itemD, month: itemM, year: itemY } = item ?? {}
+            const isStart = itemD === startD && itemM === startM && itemY === startY
+            const isEnd = itemD === endD && itemM === endM && itemY === endY
+            const startDate = +combineDateInfo(startY, startM, startD) 
+            const endDate = +combineDateInfo(endY, endM, endD) 
+            const betweenDate = +combineDateInfo(itemY, itemM, itemD) 
+            const isBetween = startDate < betweenDate && betweenDate < endDate
             return (
               <CalendarItem
                 key={`date_${index}`}
                 context={item.context}
-                start={isStartMonthEqual && isStartYearEqual && isStartDateEqual}
-                end={isEndMonthEqual && isEndYearEqual && isEndDateEqual}
+                start={isStart}
+                end={isEnd}
+                between={isBetween}
                 onClick={() => onClickDate(item)}
               >
                 {item.date}

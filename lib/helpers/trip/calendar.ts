@@ -31,3 +31,8 @@ export function getNextYearAndMonth(y, m): DateParam {
   const year = month === 1 ? y + 1 : y;
   return { year, month };
 }
+
+export function combineDateInfo(y, m, d) {
+  if (!(y && m && d)) return new Date()
+  return new Date(`${y}-${m}-${d}`)
+}

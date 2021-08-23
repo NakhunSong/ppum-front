@@ -84,6 +84,24 @@
   }
 }
 
+.calendar_item_wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.calendar_item_start {
+  background: linear-gradient(to right, #fff 50%, $disabled-color 50%);
+}
+
+.calendar_item_end {
+  background: linear-gradient(to left, #fff 50%, $disabled-color 50%);
+}
+
+.calendar_item_between {
+  background-color: $disabled-color;
+}
+
 .calendar_item {
   display: flex;
   align-items: center;
