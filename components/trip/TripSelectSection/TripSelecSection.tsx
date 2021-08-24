@@ -2,6 +2,7 @@ import MainButton from 'components/common/MainButton/MainButton'
 import SwitchButton from 'components/common/SwitchButton'
 import MobileTemplate from 'components/template/MobileTemplate'
 import { getDateArray, useCalendar } from 'hooks/useCalendar'
+import { useTrips } from 'lib/apis/trip'
 import { useCallback, useEffect, useState } from 'react'
 import Calendar from '../Calendar'
 import styles from './TripSelectSection.module.scss'
@@ -11,6 +12,8 @@ export default function TripSelectSection() {
   const [dateArray, setDateArray] = useState([])
   const [turn, setTurn] = useState('start')
   const [ready, setReady] = useState(false)
+
+  useTrips()
 
   useEffect(() => {
     const array = getDateArray({
