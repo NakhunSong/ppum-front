@@ -5,6 +5,7 @@ import { getDateArray, useCalendar } from 'hooks/useCalendar'
 import { useTrips } from 'lib/apis/trip'
 import { useCallback, useEffect, useState } from 'react'
 import Calendar from '../Calendar'
+import TripSelector from '../TripSelector'
 import styles from './TripSelectSection.module.scss'
 
 export default function TripSelectSection() {
@@ -12,8 +13,9 @@ export default function TripSelectSection() {
   const [dateArray, setDateArray] = useState([])
   const [turn, setTurn] = useState('start')
   const [ready, setReady] = useState(false)
-
-  useTrips()
+  const [selectedTripId, setSelectedTripId] = useState(null)
+  
+  const { data: trips } = useTrips()
 
   useEffect(() => {
     const array = getDateArray({
@@ -52,11 +54,15 @@ export default function TripSelectSection() {
     })
   }, [turn])
 
-  const handleSwitchButton = useCallback((direction) => {
+  const handleSwitch = useCallback((direction) => {
     setTurn(direction);
   }, [])
 
-  const handleAddButton = useCallback(() => {
+  const handleAdd = useCallback(() => {
+
+  }, [])
+
+  const handleEdit = useCallback(() => {
 
   }, [])
 
@@ -76,18 +82,31 @@ export default function TripSelectSection() {
             selected={turn}
             leftText="시작일"
             rightText="종료일"
-            onClick={handleSwitchButton}
+            onClick={handleSwitch}
           />
         </div>
         <div className={styles.select_button_wrapper}>
           <MainButton
             disabled={!ready}
-            onClick={handleAddButton}
+            onClick={handleAdd}
           >
             여행 추가
           </MainButton>
         </div>
       </div>
+      {trips && (
+        <TripSelector
+          trips={trips}
+          setSelectedTripId={setSelectedTripId}
+        />
+      )}
+      {trips && (
+        <MainButton
+          onClick={handleEdit}
+        >
+          여행 보기
+        </MainButton>
+      )}
     </MobileTemplate>
   )
 }

@@ -13,6 +13,7 @@ interface CalendarItemProps {
   start?: boolean,
   end?: boolean,
   between?: boolean,
+  active?: boolean,
   onClick: React.MouseEventHandler<HTMLDivElement>,
 }
 
@@ -26,12 +27,13 @@ function CalendarItem({
   start,
   end,
   between,
+  active,
   onClick,
 }: CalendarItemProps) {
   return (
     <div className={classNames(styles.calendar_item_wrapper, {
-      [styles.calendar_item_start]: start,
-      [styles.calendar_item_end]: end,
+      [styles.calendar_item_start]: start && active,
+      [styles.calendar_item_end]: end && active,
       [styles.calendar_item_between]: between,
     })}
       onClick={onClick}
@@ -98,7 +100,8 @@ export default function Calendar({
             const startDate = +combineDateInfo(startY, startM, startD) 
             const endDate = +combineDateInfo(endY, endM, endD) 
             const betweenDate = +combineDateInfo(itemY, itemM, itemD) 
-            const isBetween = startDate < betweenDate && betweenDate < endDate
+            const isActive = startD && endD
+            const isBetween = isActive && startDate < betweenDate && betweenDate < endDate
             return (
               <CalendarItem
                 key={`date_${index}`}
@@ -106,6 +109,7 @@ export default function Calendar({
                 start={isStart}
                 end={isEnd}
                 between={isBetween}
+                active={isActive}
                 onClick={() => onClickDate(item)}
               >
                 {item.date}
