@@ -3,19 +3,27 @@ import SwitchButton from 'components/common/SwitchButton'
 import MobileTemplate from 'components/template/MobileTemplate'
 import { getDateArray, useCalendar } from 'hooks/useCalendar'
 import { useTrips } from 'lib/apis/trip'
+import { useRouter } from 'next/dist/client/router'
 import { useCallback, useEffect, useState } from 'react'
 import Calendar from '../Calendar'
 import TripSelector from '../TripSelector'
 import styles from './TripSelectSection.module.scss'
 
 export default function TripSelectSection() {
+  const router = useRouter()
   const [calendar, dispatch] = useCalendar()
   const [dateArray, setDateArray] = useState([])
-  const [turn, setTurn] = useState('start')
+  const [name, setName] = useState('trip_ex')
   const [ready, setReady] = useState(false)
   const [selectedTripId, setSelectedTripId] = useState(null)
+  const [turn, setTurn] = useState('start')
   
-  const { data: trips } = useTrips()
+  const {
+    addTrip,
+    getTrips,
+  } = useTrips()
+  const { data: trips } = getTrips()
+  const mutation = addTrip(() => { console.log('Trip Add Success') })
 
   useEffect(() => {
     const array = getDateArray({
@@ -59,8 +67,15 @@ export default function TripSelectSection() {
   }, [])
 
   const handleAdd = useCallback(() => {
-
-  }, [])
+    const stringDate = (_d) =>
+      `${_d.year}-${_d.month}-${_d.date}`
+    const form = {
+      name,
+      beginDate: stringDate(calendar.start),
+      endDate: stringDate(calendar.end),
+    }
+    mutation.mutate(form)
+  }, [calendar, name])
 
   const handleEdit = useCallback(() => {
 
@@ -104,7 +119,7 @@ export default function TripSelectSection() {
         <MainButton
           onClick={handleEdit}
         >
-          여행 보기
+          이전 여행
         </MainButton>
       )}
     </MobileTemplate>

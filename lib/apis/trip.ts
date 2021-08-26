@@ -1,10 +1,18 @@
 import { backendAPI } from "lib/apis/api";
-import { useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 export function useTrips() {
   const queryClient = useQueryClient()
-  return useQuery('trips', async () => {
-    const accessToken = queryClient.getQueryData('accessToken')
+  const accessToken = queryClient.getQueryData('accessToken')
+  const addTrip = (callback) => useMutation(async (form: addTripPayloadType) => {
+    await backendAPI.post<any>('/trips', form, {
+      headers: { Authorization: `Bearer ${accessToken}`}
+    })
+  }, {
+    onSuccess: callback,
+    onError: () => console.log('Trip Add Failure')
+  })
+  const getTrips = () => useQuery('trips', async () => {
     const response = await backendAPI.get<tripsResultType>('/trips', {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
@@ -13,6 +21,17 @@ export function useTrips() {
   }, {
     onError: () => console.log('GET Trips Error')
   })
+
+  return {
+    addTrip,
+    getTrips,
+  }
+}
+
+type addTripPayloadType = {
+  name: string,
+  beginDate: string,
+  endDate: string,
 }
 
 type tripsResultType = {
