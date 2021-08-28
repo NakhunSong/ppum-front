@@ -4,11 +4,12 @@ import ReceiptForm from "components/receipt/ReceiptForm"
 import { initialReceipt, initialReceiptItem } from "components/receipt/ReceiptForm/ReceiptForm"
 import { Receipt } from "types/ReceiptType"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
-import tripDatesJson from 'services/trip-dates.json'
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
 import TripDateSelector from "../TripDateSelector"
 import { useTripDate } from "hooks/useTripDate"
+import { useRouter } from "next/dist/client/router"
+import { useTrips } from "lib/apis/trip"
 
 declare global {
   interface Window {
@@ -19,6 +20,8 @@ declare global {
 const imageSrc = "/images/trip/marker_selected.svg"
 
 export default function MyTrip() {
+  const router = useRouter()
+  const { tripId = '' } = router.query
   const map = useRef()
   const info = useRef(null)
   const markers = useRef([])
@@ -29,6 +32,8 @@ export default function MyTrip() {
   const [selectedReceipt, setSelectedReceipt] = useState<Receipt>(null)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
+  const { getTrip } = useTrips()  
+  const { data: tripDates } = getTrip(tripId)
   const {
     data: receipts = [],
     isLoading,
@@ -217,7 +222,7 @@ export default function MyTrip() {
         : (
         <ReceiptSelector receipts={receipts} setSelectedReceipt={setSelectedReceipt} />
       )}
-      <TripDateSelector tripDates={tripDatesJson} setTripDateIndex={setTripDateIndex} />
+      <TripDateSelector tripDates={tripDates} setTripDateIndex={setTripDateIndex} />
     </MobileTemplate>
   )
 }

@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "react-query"
 
 function getReceipts(index: number) {
   const queryClient = useQueryClient()
-  const tripDates = queryClient.getQueryData<Array<any>>('tripDates') ?? []
+  const tripDates = queryClient.getQueryData<Array<any>>('trip') ?? []
   const receipts = tripDates[index]?.receipts ?? []
   return receipts
 }

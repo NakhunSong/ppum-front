@@ -22,7 +22,7 @@ export default function TripSelectSection() {
     addTrip,
     getTrips,
   } = useTrips()
-  const { data: trips } = getTrips()
+  const { data: trips } = getTrips((id) => setSelectedTripId(id))
   const mutation = addTrip(() => { console.log('Trip Add Success') })
 
   useEffect(() => {
@@ -78,8 +78,8 @@ export default function TripSelectSection() {
   }, [calendar, name])
 
   const handleEdit = useCallback(() => {
-
-  }, [])
+    router.push(`/trips/${selectedTripId}`)
+  }, [selectedTripId])
 
   return (
     <MobileTemplate

@@ -25,6 +25,7 @@ export default function TripSelector({ setSelectedTripId, trips }) {
         const ref = (el) => $items.current[index] = el
         return (
           <Scroller.Item
+            key={`trip_selector_item_${index}`}
             ref={ref}
             selected={selected}
             gap="50px"

@@ -2,10 +2,11 @@
 // import monthMapper from 'config/constant/month.json'
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import { TripDateType } from 'types/TripType';
 import Scroller, { useScroller } from '../Scroller'
 
 type TripDateSelectorProps = {
-  tripDates: Array<any>,
+  tripDates: Array<TripDateType>,
   setTripDateIndex: React.Dispatch<number>,
 }
 
