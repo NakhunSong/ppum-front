@@ -1,10 +1,10 @@
-import type { AppProps /*, AppContext */ } from 'next/app'
+import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import Layout from 'components/base/Layout'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import 'styles/global.scss'
-
+import { useEffect } from 'react'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,8 +16,13 @@ const queryClient = new QueryClient({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    const { accessToken } = pageProps
+    if (accessToken) {
+      queryClient.setQueryData('accessToken', accessToken)
+    }
+  }, [])
   return (
-    
    <QueryClientProvider client={queryClient}>
     <Layout>
       <Head>
@@ -35,6 +40,29 @@ function MyApp({ Component, pageProps }: AppProps) {
     </Layout>
    </QueryClientProvider>
   );
+}
+
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext)
+  const { ctx } = appContext
+  const { req } = ctx
+  let accessToken
+
+  if (req) {
+    const { cookies = {} } = req
+    const { accessToken: token } = cookies
+    if (token) {
+      accessToken = token
+    }
+  }
+
+  return {
+    ...appProps,
+    pageProps: {
+      ...appProps.pageProps,
+      accessToken,
+    }
+  }
 }
 
 export default MyApp
