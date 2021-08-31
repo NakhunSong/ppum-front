@@ -1,7 +1,7 @@
 import Logo from 'components/base/Logo'
 import Button from 'components/common/Button'
 import Input from 'components/common/Input'
-import { useLogin } from 'lib/apis/auth'
+import { useLoggedInCheck, useLogin } from 'lib/apis/auth'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useState } from 'react'
 import styles from './LoginForm.module.scss'
@@ -18,12 +18,22 @@ export default function LoginForm() {
   const router = useRouter()
   const [email, handleEmail] = useInput(process.env.NEXT_PUBLIC_TEST_EMAIL)
   const [password, handlePassword] = useInput(process.env.NEXT_PUBLIC_TEST_PASSWORD)
-  const mutation = useLogin(() => { router.push('/trips') })
-
+  const moveTrips = () => router.push('/trips')
+  const mutation = useLogin(moveTrips)
+  const { data } = useLoggedInCheck(moveTrips)
+  
   const handleLogin = useCallback(() => {
     const form = { username: email, password }
     mutation.mutate(form)
   }, [])
+
+  if (data) {
+    return (
+      <div>
+        로딩 중
+      </div>
+    )  
+  }
 
   return (
     <div className={styles.wrapper}>

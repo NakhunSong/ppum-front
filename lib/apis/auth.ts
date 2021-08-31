@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { backendAPI } from './api'
 
 export function useLogin(callback) {
@@ -10,6 +10,14 @@ export function useLogin(callback) {
   }, {
     onSuccess: callback,
     onError: () => { console.log('Login Failure') }
+  })
+}
+
+export function useLoggedInCheck(callback) {
+  return useQuery('accessToken', {
+    onSuccess: (token) => {
+      if (token) { callback() }
+    }
   })
 }
 
