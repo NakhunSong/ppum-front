@@ -7,9 +7,9 @@ import ReceiptSelector from "components/receipt/ReceiptSelector"
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
 import TripDateSelector from "../TripDateSelector"
-import { useTripDate } from "hooks/useTripDate"
 import { useRouter } from "next/dist/client/router"
 import { useTrips } from "lib/apis/trip"
+import { useReceipts } from "lib/apis/receipt"
 
 declare global {
   interface Window {
@@ -37,7 +37,7 @@ export default function MyTrip() {
   const {
     data: receipts = [],
     isLoading,
-  } = useTripDate(tripDateIndex)
+  } = useReceipts(tripDateIndex)
 
   const handleCancelFormVisible = useCallback(() => {
     setReceiptForm(initialReceipt)

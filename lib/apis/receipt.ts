@@ -7,7 +7,7 @@ function getReceipts(index: number) {
   return receipts
 }
 
-export function useTripDate(index: number) {
+export function useReceipts(index: number) {
   const receipts = getReceipts(index)
   return useQuery(['receipts', index], () => receipts)
 }
