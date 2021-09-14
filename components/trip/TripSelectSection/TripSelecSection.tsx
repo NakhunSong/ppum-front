@@ -23,7 +23,7 @@ export default function TripSelectSection() {
     getTrips,
   } = useTrips()
   const { data: trips } = getTrips((id) => setSelectedTripId(id))
-  const mutation = addTrip(() => { console.log('Trip Add Success') })
+  const mutation = addTrip()
 
   useEffect(() => {
     const array = getDateArray({

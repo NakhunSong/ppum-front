@@ -4,23 +4,27 @@ import { TripDateType, TripType } from "types/TripType";
 
 export function useTrips() {
   const queryClient = useQueryClient()
-  const addTrip = (callback) => useMutation(async (form: addTripPayloadType) => {
-    const accessToken = queryClient.getQueryData('accessToken')
-    await backendAPI.post<any>('/trips', form, {
-      headers: { Authorization: `Bearer ${accessToken}`}
-    })
-  }, {
-    onSuccess: callback,
-    onError: () => console.log('Trip Add Failure')
-  })
-  const getTrips = (setter: React.Dispatch<string>) => useQuery('trips', async () => {
+  const getTripsAPI = async () => {
     const accessToken = queryClient.getQueryData('accessToken')
     const response = await backendAPI.get<tripsResultType>('/trips', {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
     const { data: trips } = response
     return trips
+  }
+  const addTrip = () => useMutation(async (form: addTripPayloadType) => {
+    const accessToken = queryClient.getQueryData('accessToken')
+    await backendAPI.post<any>('/trips', form, {
+      headers: { Authorization: `Bearer ${accessToken}`}
+    })
   }, {
+    onSuccess: async () => {
+      const data = await getTripsAPI()
+      queryClient.setQueryData('trips', data)
+    },
+    onError: () => console.log('Trip Add Failure')
+  })
+  const getTrips = (setter?: React.Dispatch<string>) => useQuery('trips', getTripsAPI, {
     onSuccess: (data) => {
       setter(data?.[0].id)
     },
@@ -37,7 +41,6 @@ export function useTrips() {
     onSuccess: (tripDates: TripDateType[]) => {
       const { receipts = [] } = tripDates?.[0] ?? {}
       queryClient.setQueryData(['receipts', 0], receipts)
-      console.log('on Success receipts: ', receipts)
     },
     onError: () => console.log('Trip Get Error')
   })
