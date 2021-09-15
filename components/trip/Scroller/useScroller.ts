@@ -28,7 +28,7 @@ export function useScroller() {
     const {
       left: targetLeft = 0,
       right: targetRight = 0
-    } = $target?.current.getClientRects()[0] ?? {}
+    } = $target?.current?.getClientRects()[0] ?? {}
     let leftItemIndex, rightItemIndex, leftItem, rightItem
     let leftCollapse = 0, rightCollapse = 0
     let returnIndex = 0, returnItem = null
@@ -109,13 +109,11 @@ export function useScroller() {
       $scroller.current.onmousemove = handleMouseMove
       $scroller.current.onmouseleave = () => handleInit
       $scroller.current.onmouseup = function() {
-        console.log('mouse up')
         handleInit()
         handleSelect()
       }
     }
     $scroller.current.onscroll = _.debounce(() => {
-      console.log('scroll')
       handleSelect()
     }, 500)
   }, [])

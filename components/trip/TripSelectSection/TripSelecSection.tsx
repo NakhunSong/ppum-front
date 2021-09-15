@@ -77,7 +77,7 @@ export default function TripSelectSection() {
     mutation.mutate(form)
   }, [calendar, name])
 
-  const handleEdit = useCallback(() => {
+  const handleSelectTrip = useCallback(() => {
     router.push(`/trips/${selectedTripId}`)
   }, [selectedTripId])
 
@@ -117,7 +117,7 @@ export default function TripSelectSection() {
       )}
       {trips && (
         <MainButton
-          onClick={handleEdit}
+          onClick={handleSelectTrip}
         >
           이전 여행
         </MainButton>

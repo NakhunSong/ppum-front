@@ -17,7 +17,7 @@ export default function MainButton({
     if (!disabled) {
       onClick();
     }
-  }, [disabled]);
+  }, [disabled, onClick]);
   return (
     <button
       className={classNames(styles.wrapper, {
