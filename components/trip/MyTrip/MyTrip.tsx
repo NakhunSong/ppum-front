@@ -33,11 +33,12 @@ export default function MyTrip() {
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
   const { getTrip } = useTrips()  
+  const { getReceipts, addReceipt } = useReceipts()  
   const { data: tripDates } = getTrip(tripId)
   const {
     data: receipts = [],
     isLoading,
-  } = useReceipts(tripDateIndex)
+  } = getReceipts(tripDateIndex)
 
   const handleCancelFormVisible = useCallback(() => {
     setReceiptForm(initialReceipt)
@@ -45,7 +46,7 @@ export default function MyTrip() {
   }, [])
 
   const handleAddReceiptItem = useCallback((e) => {
-    e.preventDefault();
+    e.preventDefault()
     setReceiptForm(r => ({
       ...r,
       receiptItems: [
@@ -57,13 +58,13 @@ export default function MyTrip() {
 
   const setMarkerEvent = useCallback((marker, receiptProp) => {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
-      setTimeout(() => setFormVisible(true), 0);
-      setReceiptForm(receiptProp);
+      setTimeout(() => setFormVisible(true), 0)
+      setReceiptForm(receiptProp)
     })
     window.kakao.maps.event.addListener(marker, 'mouseover', function() {
       const size = new window.kakao.maps.Size(60, 60)
       const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-      marker.setImage(image);
+      marker.setImage(image)
     })
     window.kakao.maps.event.addListener(marker, 'mouseout', function() {
       const size = new window.kakao.maps.Size(50, 50)
@@ -73,8 +74,8 @@ export default function MyTrip() {
     window.kakao.maps.event.addListener(marker, 'dragstart', function() {
       const size = new window.kakao.maps.Size(60, 60)
       const image = new window.kakao.maps.MarkerImage(imageSrc, size)
-      marker.setImage(image);
-      setDraggingMarker(true);
+      marker.setImage(image)
+      setDraggingMarker(true)
     })
     window.kakao.maps.event.addListener(marker, 'dragend', function() {
       const size = new window.kakao.maps.Size(50, 50)
@@ -145,7 +146,7 @@ export default function MyTrip() {
           })
         }
         setMarkerEvent(marker, receipt)
-      });
+      })
     } else {
       initMarkerName()
     }
@@ -167,6 +168,7 @@ export default function MyTrip() {
     const imageSize = new window.kakao.maps.Size(50, 50)
     const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
     const latlng = mouseEvent.latLng
+    console.log('latlng: ', latlng)
     const marker = new window.kakao.maps.Marker({ 
       position: latlng,
       text: 'dfdf',
@@ -175,8 +177,17 @@ export default function MyTrip() {
       clickable: true,
       zIndex: 5,
     })
-    setMarkerEvent(marker, initialReceipt);
+    setMarkerEvent(marker, initialReceipt)
     marker.setMap(map.current)
+
+    console.log('tripDates?.[tripDateIndex].id: ', tripDates?.[tripDateIndex].id)
+    // 영수증 추가
+    addReceipt.mutate({
+      location: { lat: latlng.Ma, lng: latlng.La },
+      name: '',
+      prices: 0,
+      tripDateId: tripDates?.[tripDateIndex].id,
+    })
   }
 
   const clickHandler = (e) => {
