@@ -2,7 +2,7 @@ import Input from 'components/common/Input'
 import styles from './ReceiptItem.module.scss'
 
 export default function ReceiptItem({ receiptItems, onChange }) {
-  return (receiptItems.length !== 0 && (
+  return (receiptItems?.length !== 0 && (
     <div className={styles.wrapper}>
       {receiptItems.map((item, index) => (
         <div

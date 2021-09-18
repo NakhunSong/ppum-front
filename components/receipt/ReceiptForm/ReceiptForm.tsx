@@ -26,7 +26,10 @@ export const initialReceiptItem = {
 }
 
 function init(receiptProp) {
-  return {receipt: receiptProp};
+  return {
+    receipt: receiptProp,
+    target: 'receipt',
+  };
 }
 
 function reducer(state, action) {
@@ -41,6 +44,7 @@ function reducer(state, action) {
           ...state.receipt,
           ...action.payload,
         },
+        target: 'receipt',
       }
     }
     case 'change_receipt_item': {
@@ -57,6 +61,7 @@ function reducer(state, action) {
           ...state.receipt,
           receiptItems,
         },
+        target: 'receiptItems',
       }
     }
     default:
@@ -69,11 +74,11 @@ export default function ReceiptForm({
   visible,
   onAdd,
   onCancel,
-  // onOk,
+  onOk,
 }) {
   const { ref } = useClickoutside(onCancel)
   const [mode, setMode] = useState('add')
-  const [{ receipt }, dispatch] = useReducer(reducer, receiptProp, init)
+  const [{ receipt, target }, dispatch] = useReducer(reducer, receiptProp, init)
 
   useEffect(() => {
     if (!visible) {
@@ -106,6 +111,24 @@ export default function ReceiptForm({
     setMode('confirm')
   }, [])
 
+  const handleClickButton = useCallback((e) => {
+    e.preventDefault()
+    
+    if (mode === 'add') {
+      onAdd()
+      return void 0
+    }
+
+    // mode: confirm
+    let form = {...receipt}
+    
+    if (target === 'receipt') {
+      delete form.receiptItems
+    }
+
+    onOk(target, form)
+  }, [receipt, target])
+
   return visible && (
     <div className={styles.wrapper}>
       <form ref={ref} className={styles.receipt_form}>
@@ -121,7 +144,7 @@ export default function ReceiptForm({
         </div>
         <ReceiptButton
           mode={Mode[mode]}
-          onAdd={onAdd}
+          onClick={handleClickButton}
         />
       </form>
     </div>

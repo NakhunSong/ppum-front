@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { LocationType } from "types/LocationType"
+import { addReceiptType, ReceiptType } from "types/ReceiptType"
 import { backendAPI } from "./api"
-
 
 export function useReceipts() {
   const queryClient = useQueryClient()
@@ -11,7 +10,15 @@ export function useReceipts() {
       headers: { Authorization: `Bearer ${accessToken}`}
     })
   }, {
-    onError: () => console.log('Receipt Add Failure')
+    onError: () => console.error('Receipt Add Failure')
+  })
+  const modifyReceipt = useMutation(async (form: ReceiptType) => {
+    const accessToken = queryClient.getQueryData('accessToken')
+    await backendAPI.patch<any>(`/receipts/${form.id}`, form, {
+      headers: { Authorization: `Bearer ${accessToken}`}
+    })
+  }, {
+    onError: () => console.error('Receipt Modify Failure')
   })
   const getReceipts = (index: number) => useQuery(['receipts', index], () => {
     const tripDates = queryClient.getQueryData<Array<any>>('trip') ?? []
@@ -19,13 +26,7 @@ export function useReceipts() {
   })
   return {
     addReceipt,
+    modifyReceipt,
     getReceipts,
   }
-}
-
-type addReceiptType = {
-  location: LocationType,
-  name: string,
-  prices: number,
-  tripDateId: string,
 }

@@ -8,18 +8,18 @@ export enum Mode {
 
 type ReceiptButtonType = {
   mode: Mode;
-  onAdd: MouseEventHandler<HTMLButtonElement>;
+  onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 export default function ReceiptButton({
   mode,
-  onAdd,
+  onClick,
 }: ReceiptButtonType) {
   return (
     <div className={styles.wrapper}>
       <button
         className={styles.button}
-        onClick={onAdd}
+        onClick={onClick}
       >
         <img
           className={styles.button_icon}
