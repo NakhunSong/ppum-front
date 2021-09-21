@@ -3,6 +3,7 @@ import SwitchButton from 'components/common/SwitchButton'
 import MobileTemplate from 'components/template/MobileTemplate'
 import { getDateArray, useCalendar } from 'hooks/useCalendar'
 import { useTrips } from 'lib/apis/trip'
+import { addZeroToOneDigit } from 'lib/helpers/trip/calendar'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useEffect, useState } from 'react'
 import Calendar from '../Calendar'
@@ -67,8 +68,11 @@ export default function TripSelectSection() {
   }, [])
 
   const handleAdd = useCallback(() => {
-    const stringDate = (_d) =>
-      `${_d.year}-${_d.month}-${_d.date}`
+    const stringDate = (_d) => {
+      const m = addZeroToOneDigit(_d.month)
+      const d = addZeroToOneDigit(_d.date)
+      return `${_d.year}-${m}-${d}`
+    }
     const form = {
       name,
       beginDate: stringDate(calendar.start),

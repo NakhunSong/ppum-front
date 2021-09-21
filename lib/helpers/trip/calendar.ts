@@ -36,3 +36,7 @@ export function combineDateInfo(y, m, d) {
   if (!(y && m && d)) return new Date()
   return new Date(`${y}-${m}-${d}`)
 }
+
+export function addZeroToOneDigit(num: number) {
+  return `${num / 10 < 1 ? '0' : ''}${num}`
+}
