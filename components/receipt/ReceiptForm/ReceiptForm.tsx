@@ -1,150 +1,38 @@
 import { useClickoutside } from 'hooks/useClickoutside'
 import ReceiptButton from '../ReceiptButton'
-import { Mode } from '../ReceiptButton/ReceiptButton'
 import styles from './ReceiptForm.module.scss'
 import ReceiptItem from '../ReceiptItem'
 import ReceiptInfo from '../ReceiptInfo'
-import { useCallback, useEffect, useReducer, useState } from 'react'
-import { InputChangeEventTargetType } from 'types/common/Event'
-
-enum ReceiptType {
-  name = 'name',
-  prices = 'prices',
-}
-
-export const initialReceipt = {
-  location: { lat: 0, lng: 0 },
-  name: '',
-  prices: 0,
-  receiptItems: [],
-}
-
-export const initialReceiptItem = {
-  name: '',
-  price: 0,
-  prices: 0,
-}
-
-function init(receiptProp) {
-  return {
-    receipt: receiptProp,
-    target: 'receipt',
-  };
-}
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'init': {
-      return {...state, ...action.payload}
-    }
-    case 'change_receipt': {
-      return {
-        ...state,
-        receipt: {
-          ...state.receipt,
-          ...action.payload,
-        },
-        target: 'receipt',
-      }
-    }
-    case 'change_receipt_item': {
-      const { id, ...rest } = action.payload
-      const receiptItems = state.receipt.receiptItems.map(r => {
-        if (r.id === id) {
-          return {...r, ...rest}
-        }
-        return r
-      })
-      return {
-        ...state,
-        receipt: {
-          ...state.receipt,
-          receiptItems,
-        },
-        target: 'receiptItems',
-      }
-    }
-    default:
-      throw new Error();
-  }
-}
 
 export default function ReceiptForm({
-  receipt: receiptProp,
+  receipt,
   visible,
-  onAdd,
+  mode,
   onCancel,
+  onChange,
   onOk,
 }) {
   const { ref } = useClickoutside(onCancel)
-  const [mode, setMode] = useState('add')
-  const [{ receipt, target }, dispatch] = useReducer(reducer, receiptProp, init)
 
-  useEffect(() => {
-    if (!visible) {
-      setMode('add')
-    }
-    dispatch({
-      type: 'init',
-      payload: { receipt: receiptProp },
-    })
-  }, [visible])
+  if (!visible) return null
 
-  const handleChangeReceipt = useCallback((e: InputChangeEventTargetType, type: ReceiptType) => {
-    dispatch({
-      type: 'change_receipt',
-      payload: {
-        [type]: e.target.value,
-      },
-    })
-    setMode('confirm')
-  }, [])
-  
-  const handleChangeReceiptItem = useCallback((e: InputChangeEventTargetType, type: ReceiptType, id: string) => {
-    dispatch({
-      type: 'change_receipt_item',
-      payload: {
-        id,
-        [type]: e.target.value,
-      },
-    })
-    setMode('confirm')
-  }, [])
-
-  const handleClickButton = useCallback((e) => {
-    e.preventDefault()
-    
-    if (mode === 'add') {
-      onAdd()
-      return void 0
-    }
-
-    // mode: confirm
-    let form = {...receipt}
-    
-    if (target === 'receipt') {
-      delete form.receiptItems
-    }
-
-    onOk(target, form)
-  }, [receipt, target])
-
-  return visible && (
+  return (
     <div className={styles.wrapper}>
       <form ref={ref} className={styles.receipt_form}>
         <div className={styles.form_inner}>
           <ReceiptInfo
+            mode={mode}
             receipt={receipt}
-            onChange={handleChangeReceipt}
+            onChange={onChange}
           />
           <ReceiptItem
             receiptItems={receipt.receiptItems}
-            onChange={handleChangeReceiptItem}
+            onChange={onChange}
           />
         </div>
         <ReceiptButton
-          mode={Mode[mode]}
-          onClick={handleClickButton}
+          mode={mode}
+          onClick={onOk}
         />
       </form>
     </div>

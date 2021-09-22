@@ -16,8 +16,9 @@ export default function ReceiptSelector({ receipts, setSelectedReceipt }: Receip
   } = useScroller()
 
   useEffect(() => {
-    setSelectedReceipt(receipts?.[selectedIndex] ?? null)
-  }, [selectedIndex])
+    const selectedReceipt = receipts?.[selectedIndex] ?? null
+    setSelectedReceipt(selectedReceipt)
+  }, [receipts, selectedIndex])
 
   return (
     <Scroller

@@ -1,20 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { addReceiptType, ReceiptType } from "types/ReceiptType"
+import { ReceiptPayloadType, ReceiptType } from "types/receipt.type"
 import { backendAPI } from "./api"
 
 export function useReceipts() {
   const queryClient = useQueryClient()
-  const addReceipt = useMutation(async (form: addReceiptType) => {
+  const addReceipt = useMutation(async (payload: ReceiptPayloadType) => {
     const accessToken = queryClient.getQueryData('accessToken')
-    await backendAPI.post('/receipts', form, {
+    await backendAPI.post('/receipts', payload, {
       headers: { Authorization: `Bearer ${accessToken}`}
     })
   }, {
     onError: () => console.error('Receipt Add Failure')
   })
-  const modifyReceipt = useMutation(async (form: ReceiptType) => {
+  const modifyReceipt = useMutation(async (payload: ReceiptType) => {
     const accessToken = queryClient.getQueryData('accessToken')
-    await backendAPI.patch<any>(`/receipts/${form.id}`, form, {
+    await backendAPI.patch<any>(`/receipts/${payload.id}`, payload, {
       headers: { Authorization: `Bearer ${accessToken}`}
     })
   }, {

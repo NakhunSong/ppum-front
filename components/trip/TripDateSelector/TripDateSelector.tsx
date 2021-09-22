@@ -2,7 +2,7 @@
 // import monthMapper from 'config/constant/month.json'
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
-import { TripDateType } from 'types/TripType';
+import { TripDateType } from 'types/trip.type';
 import Scroller, { useScroller } from '../Scroller'
 
 type TripDateSelectorProps = {

@@ -1,8 +1,7 @@
 import MobileTemplate from "components/template/MobileTemplate"
 import { useCallback, useEffect, useRef, useState } from "react"
 import ReceiptForm from "components/receipt/ReceiptForm"
-import { initialReceipt, initialReceiptItem } from "components/receipt/ReceiptForm/ReceiptForm"
-import { ReceiptType } from "types/ReceiptType"
+import { ReceiptPropertyKey, ReceiptType } from "types/receipt.type"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
@@ -10,6 +9,9 @@ import TripDateSelector from "../TripDateSelector"
 import { useRouter } from "next/dist/client/router"
 import { useTrips } from "lib/apis/trip"
 import { useReceipts } from "lib/apis/receipt"
+import { initialReceipt, useReceiptForm } from "stores/receipt/receipt.reducer"
+import { InputChangeEventTargetType } from "types/common/Event"
+import { actionCreators } from "stores/receipt/receipt.actions"
 
 declare global {
   interface Window {
@@ -28,9 +30,14 @@ export default function MyTrip() {
   const [activeMarker, setActiveMarker] = useState(false)
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
-  const [receiptForm, setReceiptForm] = useState<ReceiptType>(initialReceipt)
   const [selectedReceipt, setSelectedReceipt] = useState<ReceiptType>(null)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
+  const [tripDateId, setTripDateId] = useState<string>(null)
+
+  const [{
+    mode,
+    receipt: receiptForm,
+  }, dispatch] = useReceiptForm(selectedReceipt)
 
   const { getTrip } = useTrips()  
   const {
@@ -45,34 +52,40 @@ export default function MyTrip() {
   } = getReceipts(tripDateIndex)
 
   const handleCancelFormVisible = useCallback(() => {
-    setReceiptForm(initialReceipt)
     setFormVisible(false)
+    setSelectedReceipt(initialReceipt)
   }, [])
 
-  const handleAddReceiptItem = useCallback((e) => {
-    e.preventDefault()
-    setReceiptForm(r => ({
-      ...r,
-      receiptItems: [
-        ...r.receiptItems,
-        initialReceiptItem,
-      ],
-    }))
+  const handleAddReceiptItem = useCallback(() => {
   }, [])
 
-  const handleOkReceiptForm = useCallback((target, form) => {
-    handleCancelFormVisible()
-
-    if (target === 'receipt') {
+  const handleConfirmReceiptForm = useCallback(() => {
+    if (mode === 'create_receipt') {
+      const { location, name, prices } = receiptForm
+      const form = {
+        location,
+        name,
+        prices,
+        tripDateId,
+      }
+      addReceipt.mutate(form)
+    }
+    if (mode === 'modify_receipt') {
+      const form = {...receiptForm}
       modifyReceipt.mutate(form)
     }
-    // modifyReceiptItem.mutate(form)
-  }, [])
+    if (mode === 'create_receipt_item') {  }
+    if (mode === 'modify_receipt_item') {  }
 
-  const setMarkerEvent = useCallback((marker, receiptProp) => {
+    handleCancelFormVisible()
+  }, [mode, receiptForm, tripDateId])
+
+  const setMarkerEvent = useCallback((marker, receiptProp?) => {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
       setTimeout(() => setFormVisible(true), 0)
-      setReceiptForm(receiptProp)
+      if (receiptProp) {
+        setSelectedReceipt(receiptProp)
+      }
     })
     window.kakao.maps.event.addListener(marker, 'mouseover', function() {
       const size = new window.kakao.maps.Size(60, 60)
@@ -119,8 +132,77 @@ export default function MyTrip() {
     }
   }, [])
 
+  const createMarker = (mouseEvent) => {
+    const imageSize = new window.kakao.maps.Size(50, 50)
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
+    const latlng = mouseEvent.latLng
+    const marker = new window.kakao.maps.Marker({ 
+      position: latlng,
+      image : markerImage,
+      draggable: true,
+      clickable: true,
+      zIndex: 5,
+    })
+    setMarkerEvent(marker)
+    marker.setMap(map.current)
+
+    return { lat: latlng.Ma, lng: latlng.La }
+  }
+
+  const callbackOfClickingMarker = (e) => {
+    const latlng = createMarker(e)
+    setActiveMarker(false)
+    setTimeout(() => setFormVisible(true), 0)
+    dispatch(actionCreators.changeMode('create_receipt'))
+    dispatch(actionCreators.changeReceipt({
+      location: latlng,
+    }))
+  }
+
+  const handleAddMarker = () => {
+    setActiveMarker(true)
+    window.kakao.maps.event.addListener(map.current, 'click', callbackOfClickingMarker)
+  }
+  
+  const handleAddOff = () => {
+    setActiveMarker(false)
+    window.kakao.maps.event.removeListener(map.current, 'click', callbackOfClickingMarker)
+  }
+
+  const handleChange = useCallback((
+    e: InputChangeEventTargetType,
+    propertyKey: ReceiptPropertyKey,
+    id?: string,
+  ) => {
+    const value = e.target.value
+    let action
+    
+    if (!id) {
+      action = actionCreators.changeReceipt({
+        [propertyKey]: value,
+      })
+    } else {
+      action = actionCreators.changeReceiptItem({
+        [propertyKey]: value,
+        id,
+      })
+    }
+
+    dispatch(action)
+  }, [])
+
+  const handleOk = useCallback((e) => {
+    e.preventDefault()
+    
+    if (mode === 'add') {
+      handleAddReceiptItem()
+      return void 0
+    }
+
+    handleConfirmReceiptForm()
+  }, [mode, handleConfirmReceiptForm])
+  
   useEffect(() => {
-    console.log('mounted')
     const container = document.getElementById('map')
     const options = {
       center: new window.kakao.maps.LatLng(33.450701, 126.570667),
@@ -136,7 +218,7 @@ export default function MyTrip() {
       })
     }
     if (receipts?.length > 0) {
-      receipts.forEach((receipt, index) => {
+      receipts.forEach((receipt) => {
         const { location, name } = receipt
         const { lat, lng } = location
         const imageSize = new window.kakao.maps.Size(50, 50)
@@ -152,12 +234,6 @@ export default function MyTrip() {
           zIndex: 5,
         })
         markers.current.push(marker)
-        if (index === 0) {
-          setMarkerName({
-            position: latlng,
-            name,
-          })
-        }
         setMarkerEvent(marker, receipt)
       })
     } else {
@@ -175,53 +251,27 @@ export default function MyTrip() {
         name,
       })
     }
+
+    dispatch(actionCreators.init(selectedReceipt))
   }, [selectedReceipt])
 
-  const addMarkerCallback = (mouseEvent) => {
-    const imageSize = new window.kakao.maps.Size(50, 50)
-    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize)
-    const latlng = mouseEvent.latLng
-    const marker = new window.kakao.maps.Marker({ 
-      position: latlng,
-      text: 'dfdf',
-      image : markerImage,
-      draggable: true,
-      clickable: true,
-      zIndex: 5,
-    })
-    setMarkerEvent(marker, initialReceipt)
-    marker.setMap(map.current)
-
-    // 영수증 추가
-    addReceipt.mutate({
-      location: { lat: latlng.Ma, lng: latlng.La },
-      name: '',
-      prices: 0,
-      tripDateId: tripDates?.[tripDateIndex]?.id,
-    })
-  }
-
-  const clickHandler = (e) => {
-    setActiveMarker(false)
-    setReceiptForm(initialReceipt)
-    addMarkerCallback(e)
-  }
-
-  const handleAddMarker = () => {
-    setActiveMarker(true)
-    window.kakao.maps.event.addListener(map.current, 'click', clickHandler)
-  }
-  
-  const handleAddOff = () => {
-    setActiveMarker(false)
-    window.kakao.maps.event.removeListener(map.current, 'click', clickHandler)
-  }
-  
   useEffect(() => {
     if (!activeMarker) {
       handleAddOff()
     }
   }, [activeMarker])
+
+  useEffect(() => {
+    if (!formVisible) {
+      dispatch(actionCreators.changeMode('create_receipt_item'))
+    }
+  }, [formVisible])
+
+  useEffect(() => {
+    if (tripDates) {
+      setTripDateId(tripDates[tripDateIndex]?.id)
+    }
+  }, [tripDates, tripDateIndex])
 
   return (
     <MobileTemplate
@@ -236,9 +286,10 @@ export default function MyTrip() {
       <ReceiptForm
         receipt={receiptForm}
         visible={formVisible}
-        onAdd={handleAddReceiptItem}
+        mode={mode}
         onCancel={handleCancelFormVisible}
-        onOk={handleOkReceiptForm}
+        onChange={handleChange}
+        onOk={handleOk}
       />
       {isLoading
         ? <span>로딩중...</span>

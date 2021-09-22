@@ -1,6 +1,6 @@
 import { backendAPI } from "lib/apis/api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { TripDateType, TripType } from "types/TripType";
+import { TripDateType, TripType } from "types/trip.type";
 
 export function useTrips() {
   const queryClient = useQueryClient()

@@ -1,10 +1,6 @@
 import { MouseEventHandler } from 'react';
+import { CreateMode, Mode } from 'types/receipt.type';
 import styles from './ReceiptButton.module.scss';
-
-export enum Mode {
-  add = 'add',
-  confirm = 'confirm',
-}
 
 type ReceiptButtonType = {
   mode: Mode;
@@ -15,6 +11,13 @@ export default function ReceiptButton({
   mode,
   onClick,
 }: ReceiptButtonType) {
+  const isAdd = (mode: Mode) => {
+    if (mode.includes('create_receipt_item')) {
+      return 'add'
+    }
+    return 'confirm'
+  }
+
   return (
     <div className={styles.wrapper}>
       <button
@@ -23,7 +26,7 @@ export default function ReceiptButton({
       >
         <img
           className={styles.button_icon}
-          src={`/images/receipt/${mode}.svg`}
+          src={`/images/receipt/${isAdd(mode)}.svg`}
           alt={`${mode}`}
         />
       </button>

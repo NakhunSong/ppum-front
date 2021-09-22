@@ -17,6 +17,7 @@ export default function ReceiptItem({ receiptItems, onChange }) {
           <div>
             <Input.InputWrapper marginBottom>
               <Input
+                type="number"
                 placeholder="항목명"
                 styleProps={{
                   backgroundColor: 'white',
@@ -29,6 +30,7 @@ export default function ReceiptItem({ receiptItems, onChange }) {
             </Input.InputWrapper>
             <Input.InputWrapper>
               <Input
+                type="number"
                 placeholder="금액"
                 styleProps={{
                   backgroundColor: 'white',
