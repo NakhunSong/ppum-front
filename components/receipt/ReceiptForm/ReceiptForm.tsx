@@ -8,6 +8,7 @@ export default function ReceiptForm({
   receipt,
   visible,
   mode,
+  handleChangeMode,
   onCancel,
   onChange,
   onOk,
@@ -24,6 +25,7 @@ export default function ReceiptForm({
             mode={mode}
             receipt={receipt}
             onChange={onChange}
+            handleChangeMode={handleChangeMode}
           />
           <ReceiptItem
             receiptItems={receipt.receiptItems}

@@ -1,7 +1,7 @@
 import MobileTemplate from "components/template/MobileTemplate"
 import { useCallback, useEffect, useRef, useState } from "react"
 import ReceiptForm from "components/receipt/ReceiptForm"
-import { ReceiptPropertyKey, ReceiptType } from "types/receipt.type"
+import { Mode, ReceiptPropertyKey, ReceiptType } from "types/receipt.type"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
@@ -50,6 +50,10 @@ export default function MyTrip() {
     data: receipts = [],
     isLoading,
   } = getReceipts(tripDateIndex)
+
+  const handleChangeMode = useCallback((modeProp: Mode) => {
+    dispatch(actionCreators.changeMode(modeProp))
+  }, [])
 
   const handleCancelFormVisible = useCallback(() => {
     setFormVisible(false)
@@ -153,7 +157,7 @@ export default function MyTrip() {
     const latlng = createMarker(e)
     setActiveMarker(false)
     setTimeout(() => setFormVisible(true), 0)
-    dispatch(actionCreators.changeMode('create_receipt'))
+    handleChangeMode('create_receipt')
     dispatch(actionCreators.changeReceipt({
       location: latlng,
     }))
@@ -263,7 +267,7 @@ export default function MyTrip() {
 
   useEffect(() => {
     if (!formVisible) {
-      dispatch(actionCreators.changeMode('create_receipt_item'))
+      handleChangeMode('create_receipt_item')
     }
   }, [formVisible])
 
@@ -287,6 +291,7 @@ export default function MyTrip() {
         receipt={receiptForm}
         visible={formVisible}
         mode={mode}
+        handleChangeMode={handleChangeMode}
         onCancel={handleCancelFormVisible}
         onChange={handleChange}
         onOk={handleOk}

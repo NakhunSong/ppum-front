@@ -1,5 +1,6 @@
+import classNames from 'classnames'
 import Input from 'components/common/Input'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Mode, ReceiptType } from 'types/receipt.type'
 import styles from './ReceiptInfo.module.scss'
 
@@ -7,16 +8,22 @@ type ReceiptInfoType = {
   mode: Mode,
   receipt: ReceiptType,
   onChange: Function,
+  handleChangeMode: (mode: Mode) => void,
 }
 
 export default function ReceiptInfo({
   mode,
   receipt,
   onChange,
+  handleChangeMode,
 }: ReceiptInfoType) {
   const isRelevantReceipt = useMemo(() => {
     return mode === 'create_receipt' || mode === 'modify_receipt'
   }, [mode])
+  const handleClickName = useCallback((e) => {
+    e.stopPropagation()
+    handleChangeMode('modify_receipt')
+  }, [])
 
   return (
     <div className={styles.wrapper}>
@@ -41,30 +48,21 @@ export default function ReceiptInfo({
                 onChange={(e) => onChange(e, 'name')}
               />
             ) : (
-              <div className={styles.info_text}>
+              <div
+                className={classNames(
+                  styles.info_text,
+                  styles.info_text_name,
+                )}
+                onClick={handleClickName}
+              >
                 장소: {receipt.name}
               </div>
             )}
         </Input.InputWrapper>
         <Input.InputWrapper>
-          {isRelevantReceipt
-            ? (
-              <Input
-                type="number"
-                styleProps={{
-                  backgroundColor: 'white',
-                  border: '1px solid #0f4c81',
-                  borderRadius: '2px',
-                }}
-                placeholder="총 금액"
-                value={receipt.prices}
-                onChange={(e) => onChange(e, 'prices')}
-              />
-            ) : (
-              <div className={styles.info_text}>
-                총 금액: {receipt.prices}
-              </div>
-            )}
+          <div className={styles.info_text} onClick={() => console.log('hih')}>
+            총 금액: {receipt.prices}
+          </div>
         </Input.InputWrapper>
       </div>
     </div>

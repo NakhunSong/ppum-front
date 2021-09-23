@@ -13,3 +13,10 @@
 .info_text {
   width: 100%;
 }
+
+.info_text_name {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
