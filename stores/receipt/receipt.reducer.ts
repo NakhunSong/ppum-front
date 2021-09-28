@@ -1,13 +1,15 @@
-import { useReducer } from "react";
-import { ReceiptType } from "types/receipt.type";
-import { ActionTypes, ACTION_TYPES } from "./receipt.actions";
+import _ from "lodash";
+import { useReducer } from "react"
+import { ActionTypes, ACTION_TYPES } from "./receipt.actions"
 
-export const initialReceipt = {
-  location: { lat: 0, lng: 0 },
-  name: '',
-  prices: 0,
-  receiptItems: [],
-  tripDateId: null,
+export const initialReceipt = ()=> {
+  return {
+    location: { lat: 0, lng: 0 },
+    name: '',
+    prices: 0,
+    receiptItems: [],
+    tripDateId: null,
+  }
 }
 
 export const initialReceiptItem = {
@@ -20,19 +22,35 @@ function init(receiptProp) {
   return {
     mode: 'create_receipt_item',
     receipt: receiptProp,
+    tempReceipt: receiptProp,
   };
 }
 
 function reducer(state, action: ActionTypes) {
   switch (action.type) {
     case ACTION_TYPES.INIT: {
+      const temp = _.cloneDeep(action.payload)
       return {
         ...state,
         receipt: action.payload,
+        tempReceipt: temp,
       }
     }
     case ACTION_TYPES.ADD_RECEIPT: {
-      return { ...state }
+      return {
+        ...state,
+        receipt: {
+          ...initialReceipt(),
+          location: action.payload,
+        }
+      }
+    }
+    case ACTION_TYPES.CANCEL_EDIT: {
+      const temp = _.cloneDeep(state.tempReceipt)
+      return {
+        ...state,
+        receipt: temp,
+      }
     }
     case ACTION_TYPES.CHANGE_MODE: {
       return {
@@ -65,11 +83,32 @@ function reducer(state, action: ActionTypes) {
         },
       }
     }
+    case ACTION_TYPES.CREATE_RECEIPT: {
+      return {
+        ...state,
+        receipt: {
+          ...state.receipt,
+          ...action.payload,
+        }
+      }
+    }
+    case ACTION_TYPES.CREATE_RECEIPT_ITEM: {
+      return {
+        ...state,
+        receipt: {
+          ...state.receipt,
+          receiptItem: {
+            ...state.receiptItem,
+            ...action.payload,
+          }
+        }
+      }
+    }
     default:
       throw new Error();
   }
 }
 
-export function useReceiptForm(receiptProp: ReceiptType) {
-  return useReducer(reducer, initialReceipt, init)
+export function useReceiptForm() {
+  return useReducer(reducer, initialReceipt(), init)
 }

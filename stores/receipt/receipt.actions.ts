@@ -1,11 +1,14 @@
-import { Mode, ReceiptItemPropertyType, ReceiptPropertyType, ReceiptType } from "types/receipt.type"
+import { LocationType, Mode, ReceiptItemPropertyType, ReceiptPropertyType, ReceiptType } from "types/receipt.type"
 
 export const ACTION_TYPES = {
   INIT: 'INIT',
   ADD_RECEIPT: 'ADD_RECEIPT',
+  CANCEL_EDIT: 'CANCEL_EDIT',
   CHANGE_MODE: 'CHANGE_MODE',
   CHANGE_RECEIPT: 'CHANGE_RECEIPT',
   CHANGE_RECEIPT_ITEM: 'CHANGE_RECEIPT_ITEM',
+  CREATE_RECEIPT: 'CREATE_RECEIPT',
+  CREATE_RECEIPT_ITEM: 'CREATE_RECEIPT_ITEM',
 } as const
 
 function init(payload: ReceiptType) {
@@ -15,9 +18,16 @@ function init(payload: ReceiptType) {
   }
 }
 
-function addReceipt() {
+function addReceipt(payload: LocationType) {
   return {
     type: ACTION_TYPES.ADD_RECEIPT,
+    payload,
+  }
+}
+
+function cancelEdit() {
+  return {
+    type: ACTION_TYPES.CANCEL_EDIT,
   }
 }
 
@@ -41,18 +51,38 @@ function changeReceiptItem(payload: ReceiptItemPropertyType) {
     payload,
   }
 }
+
+function createReceipt(payload) {
+  return {
+    type: ACTION_TYPES.CREATE_RECEIPT,
+    payload,
+  }
+}
+
+function createReceiptItem(payload) {
+  return {
+    type: ACTION_TYPES.CREATE_RECEIPT_ITEM,
+    payload,
+  }
+}
  
 export const actionCreators = {
   init,
   addReceipt,
+  cancelEdit,
   changeMode,
   changeReceipt,
   changeReceiptItem,
+  createReceipt,
+  createReceiptItem,
 } as const
 
 export type ActionTypes = 
   | ReturnType<typeof init>
   | ReturnType<typeof addReceipt>
+  | ReturnType<typeof cancelEdit>
   | ReturnType<typeof changeMode>
   | ReturnType<typeof changeReceipt>
   | ReturnType<typeof changeReceiptItem>
+  | ReturnType<typeof createReceipt>
+  | ReturnType<typeof createReceiptItem>

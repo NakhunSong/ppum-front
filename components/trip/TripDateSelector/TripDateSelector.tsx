@@ -1,16 +1,22 @@
 // import classNames from 'classnames'
 // import monthMapper from 'config/constant/month.json'
-import { useEffect } from 'react';
+import { usePrevious } from 'hooks/usePrevious';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { TripDateType } from 'types/trip.type';
 import Scroller, { useScroller } from '../Scroller'
 
 type TripDateSelectorProps = {
   tripDates: Array<TripDateType>,
+  setTripDateId: React.Dispatch<string>,
   setTripDateIndex: React.Dispatch<number>,
 }
 
-export default function TripDateSelector({ tripDates, setTripDateIndex }: TripDateSelectorProps) {
+export default function TripDateSelector({
+  tripDates,
+  setTripDateId,
+  setTripDateIndex,
+}: TripDateSelectorProps) {
   const {
     $target,
     $scroller,
@@ -18,14 +24,25 @@ export default function TripDateSelector({ tripDates, setTripDateIndex }: TripDa
     selectedIndex,
   } = useScroller()
   const queryClient = useQueryClient()
+  const [innerId, setInnerId] = useState(null)
+  const [innerIndex, setInnerIndex] = useState(selectedIndex)
+  const preSelectedIndex = usePrevious(selectedIndex)
   
-  useEffect(() => {
-    setTripDateIndex(selectedIndex)
+  if (selectedIndex !== preSelectedIndex && selectedIndex !== innerIndex) {
+    const selectedTripDate = tripDates?.[selectedIndex]
+    const tripDateId = selectedTripDate?.id ?? null
     queryClient.setQueryData(
-      ['receipts', selectedIndex],
-      tripDates?.[selectedIndex]?.receipts ?? []
+      ['receipts', tripDateId],
+      selectedTripDate?.receipts ?? []
     )
-  }, [selectedIndex, tripDates])
+    setInnerId(tripDateId)
+    setInnerIndex(selectedIndex)
+  }
+
+  useEffect(() => {
+    setTripDateId(innerId)
+    setTripDateIndex(innerIndex)
+  }, [innerId, innerIndex])
 
   return (
     <Scroller

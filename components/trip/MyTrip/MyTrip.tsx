@@ -9,7 +9,7 @@ import TripDateSelector from "../TripDateSelector"
 import { useRouter } from "next/dist/client/router"
 import { useTrips } from "lib/apis/trip"
 import { useReceipts } from "lib/apis/receipt"
-import { initialReceipt, useReceiptForm } from "stores/receipt/receipt.reducer"
+import { useReceiptForm } from "stores/receipt/receipt.reducer"
 import { InputChangeEventTargetType } from "types/common/Event"
 import { actionCreators } from "stores/receipt/receipt.actions"
 
@@ -24,6 +24,12 @@ const imageSrc = "/images/trip/marker_selected.svg"
 export default function MyTrip() {
   const router = useRouter()
   const { tripId = '' } = router.query
+
+  const [{
+    mode,
+    receipt: receiptForm,
+  }, dispatch] = useReceiptForm()
+
   const map = useRef()
   const info = useRef(null)
   const markers = useRef([])
@@ -31,25 +37,13 @@ export default function MyTrip() {
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [selectedReceipt, setSelectedReceipt] = useState<ReceiptType>(null)
-  const [tripDateIndex, setTripDateIndex] = useState<number>(0)
   const [tripDateId, setTripDateId] = useState<string>(null)
-
-  const [{
-    mode,
-    receipt: receiptForm,
-  }, dispatch] = useReceiptForm(selectedReceipt)
+  const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
   const { getTrip } = useTrips()  
-  const {
-    getReceipts,
-    addReceipt,
-    modifyReceipt,
-  } = useReceipts()  
+  const { getReceipts, addReceipt, modifyReceipt } = useReceipts()  
   const { data: tripDates } = getTrip(tripId)
-  const {
-    data: receipts = [],
-    isLoading,
-  } = getReceipts(tripDateIndex)
+  const { data: receipts = [], isLoading } = getReceipts(tripDateIndex)
 
   const handleChangeMode = useCallback((modeProp: Mode) => {
     dispatch(actionCreators.changeMode(modeProp))
@@ -57,7 +51,7 @@ export default function MyTrip() {
 
   const handleCancelFormVisible = useCallback(() => {
     setFormVisible(false)
-    setSelectedReceipt(initialReceipt)
+    dispatch(actionCreators.cancelEdit())
   }, [])
 
   const handleAddReceiptItem = useCallback(() => {
@@ -158,9 +152,7 @@ export default function MyTrip() {
     setActiveMarker(false)
     setTimeout(() => setFormVisible(true), 0)
     handleChangeMode('create_receipt')
-    dispatch(actionCreators.changeReceipt({
-      location: latlng,
-    }))
+    dispatch(actionCreators.addReceipt(latlng))
   }
 
   const handleAddMarker = () => {
@@ -198,7 +190,7 @@ export default function MyTrip() {
   const handleOk = useCallback((e) => {
     e.preventDefault()
     
-    if (mode === 'add') {
+    if (mode === 'create_receipt_item') {
       handleAddReceiptItem()
       return void 0
     }
@@ -271,12 +263,6 @@ export default function MyTrip() {
     }
   }, [formVisible])
 
-  useEffect(() => {
-    if (tripDates) {
-      setTripDateId(tripDates[tripDateIndex]?.id)
-    }
-  }, [tripDates, tripDateIndex])
-
   return (
     <MobileTemplate
       header={(
@@ -301,7 +287,11 @@ export default function MyTrip() {
         : (
         <ReceiptSelector receipts={receipts} setSelectedReceipt={setSelectedReceipt} />
       )}
-      <TripDateSelector tripDates={tripDates} setTripDateIndex={setTripDateIndex} />
+      <TripDateSelector
+        tripDates={tripDates}
+        setTripDateId={setTripDateId}
+        setTripDateIndex={setTripDateIndex}
+      />
     </MobileTemplate>
   )
 }
