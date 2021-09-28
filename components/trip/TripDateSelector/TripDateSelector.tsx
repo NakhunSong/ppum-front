@@ -8,13 +8,11 @@ import Scroller, { useScroller } from '../Scroller'
 
 type TripDateSelectorProps = {
   tripDates: Array<TripDateType>,
-  setTripDateId: React.Dispatch<string>,
   setTripDateIndex: React.Dispatch<number>,
 }
 
 export default function TripDateSelector({
   tripDates,
-  setTripDateId,
   setTripDateIndex,
 }: TripDateSelectorProps) {
   const {
@@ -24,7 +22,6 @@ export default function TripDateSelector({
     selectedIndex,
   } = useScroller()
   const queryClient = useQueryClient()
-  const [innerId, setInnerId] = useState(null)
   const [innerIndex, setInnerIndex] = useState(selectedIndex)
   const preSelectedIndex = usePrevious(selectedIndex)
   
@@ -35,14 +32,12 @@ export default function TripDateSelector({
       ['receipts', tripDateId],
       selectedTripDate?.receipts ?? []
     )
-    setInnerId(tripDateId)
     setInnerIndex(selectedIndex)
   }
 
   useEffect(() => {
-    setTripDateId(innerId)
     setTripDateIndex(innerIndex)
-  }, [innerId, innerIndex])
+  }, [innerIndex])
 
   return (
     <Scroller

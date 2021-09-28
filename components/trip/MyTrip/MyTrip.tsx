@@ -37,7 +37,6 @@ export default function MyTrip() {
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [selectedReceipt, setSelectedReceipt] = useState<ReceiptType>(null)
-  const [tripDateId, setTripDateId] = useState<string>(null)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
   const { getTrip } = useTrips()  
@@ -58,13 +57,16 @@ export default function MyTrip() {
   }, [])
 
   const handleConfirmReceiptForm = useCallback(() => {
+    const getTripDateId = () => {
+      return tripDates?.[tripDateIndex]?.id ?? null
+    }
     if (mode === 'create_receipt') {
       const { location, name, prices } = receiptForm
       const form = {
         location,
         name,
         prices,
-        tripDateId,
+        tripDateId: getTripDateId(),
       }
       addReceipt.mutate(form)
     }
@@ -76,7 +78,7 @@ export default function MyTrip() {
     if (mode === 'modify_receipt_item') {  }
 
     handleCancelFormVisible()
-  }, [mode, receiptForm, tripDateId])
+  }, [mode, receiptForm, tripDates, tripDateIndex])
 
   const setMarkerEvent = useCallback((marker, receiptProp?) => {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
@@ -289,7 +291,6 @@ export default function MyTrip() {
       )}
       <TripDateSelector
         tripDates={tripDates}
-        setTripDateId={setTripDateId}
         setTripDateIndex={setTripDateIndex}
       />
     </MobileTemplate>
