@@ -15,3 +15,10 @@
     cursor: pointer;
   }
 }
+
+.text_button {
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

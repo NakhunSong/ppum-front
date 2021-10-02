@@ -3,6 +3,13 @@ import ReceiptButton from '../ReceiptButton'
 import styles from './ReceiptForm.module.scss'
 import ReceiptItem from '../ReceiptItem'
 import ReceiptInfo from '../ReceiptInfo'
+import { useCallback, useMemo, useState } from 'react'
+import { usePrevious } from 'hooks/usePrevious'
+import { ReceiptItemType } from 'types/receipt.type'
+
+export interface ReceiptItemFormType extends ReceiptItemType {
+  isEdit?: boolean
+}
 
 export default function ReceiptForm({
   receipt,
@@ -13,9 +20,49 @@ export default function ReceiptForm({
   onChange,
   onOk,
 }) {
+  if (!visible) return null
+
   const { ref } = useClickoutside(onCancel)
 
-  if (!visible) return null
+  const receiptItems = useMemo(() => receipt.receiptItems, [receipt])
+  const preReceiptItems = usePrevious(receiptItems)
+  const [receiptItemForm, setReceiptItemForm] = useState<ReceiptItemFormType>(null)
+  const [innerReceiptItems, setInnerReceiptItems] = useState<ReceiptItemFormType[]>(receiptItems)
+  
+  if (receiptItems !== innerReceiptItems && receiptItems !== preReceiptItems) {
+    setInnerReceiptItems(receiptItems)
+  }
+
+  const handleClickReceiptItemModifyButton = useCallback((e, id: string, isEdit: boolean) => {
+    e.stopPropagation()
+    if (!isEdit) {
+      setReceiptItemForm(innerReceiptItems.find(i => i.id === id))
+    }
+    handleChangeMode(`${isEdit ? 'create' : 'modify'}_receipt_item`)
+    setInnerReceiptItems(items => {
+      const newItems = items.map(i => {
+        if (i.id === id) {
+          if (!isEdit) {
+            i.isEdit = true
+          } else {
+            delete i.isEdit
+          }
+        }
+        return i
+      })
+      return newItems
+    })
+  }, [innerReceiptItems])
+
+  const handleChangeReceiptItemInput = useCallback((key: string) => {
+    return (e) => {
+      console.log(e.target.value)
+      setReceiptItemForm(item => ({
+        ...item,
+        [key]: e.target.value,
+      }))
+    }
+  }, [receiptItemForm])
 
   return (
     <div className={styles.wrapper}>
@@ -28,8 +75,10 @@ export default function ReceiptForm({
             handleChangeMode={handleChangeMode}
           />
           <ReceiptItem
-            receiptItems={receipt.receiptItems}
-            onChange={onChange}
+            receiptItems={innerReceiptItems}
+            receiptItemForm={receiptItemForm}
+            onChange={handleChangeReceiptItemInput}
+            onClick={handleClickReceiptItemModifyButton}
           />
         </div>
         <ReceiptButton

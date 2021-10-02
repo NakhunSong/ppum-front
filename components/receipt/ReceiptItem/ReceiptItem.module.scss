@@ -1,10 +1,7 @@
 @import 'base.scss';
 
 .wrapper {
-  border-top: 1px solid rgba(139, 107, 19, 0.6);
-  // padding-top: 16px;
-  
-  span { color: rgb(78, 78, 78); }
+  border-top: 1px solid rgba(139, 107, 19, 0.6); 
 }
 
 .item_wrapper {
@@ -16,4 +13,8 @@
 
 .item_wrapper_label {
   margin-bottom: 8px;
+}
+
+.modify_button {
+  margin-left: 8px;
 }

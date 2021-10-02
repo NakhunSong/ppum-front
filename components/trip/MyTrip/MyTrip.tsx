@@ -53,33 +53,6 @@ export default function MyTrip() {
     dispatch(actionCreators.cancelEdit())
   }, [])
 
-  const handleAddReceiptItem = useCallback(() => {
-  }, [])
-
-  const handleConfirmReceiptForm = useCallback(() => {
-    const getTripDateId = () => {
-      return tripDates?.[tripDateIndex]?.id ?? null
-    }
-    if (mode === 'create_receipt') {
-      const { location, name, prices } = receiptForm
-      const form = {
-        location,
-        name,
-        prices,
-        tripDateId: getTripDateId(),
-      }
-      addReceipt.mutate(form)
-    }
-    if (mode === 'modify_receipt') {
-      const form = {...receiptForm}
-      modifyReceipt.mutate(form)
-    }
-    if (mode === 'create_receipt_item') {  }
-    if (mode === 'modify_receipt_item') {  }
-
-    handleCancelFormVisible()
-  }, [mode, receiptForm, tripDates, tripDateIndex])
-
   const setMarkerEvent = useCallback((marker, receiptProp?) => {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
       setTimeout(() => setFormVisible(true), 0)
@@ -189,12 +162,46 @@ export default function MyTrip() {
     dispatch(action)
   }, [])
 
-  const handleOk = useCallback((e) => {
+  const handleAddReceiptItem = useCallback(() => {
+  }, [])
+
+  const handleConfirmReceiptForm = useCallback(() => {
+    const getTripDateId = () => {
+      return tripDates?.[tripDateIndex]?.id ?? null
+    }
+
+    if (mode === 'create_receipt') {
+      const { location, name, prices } = receiptForm
+      const form = {
+        location,
+        name,
+        prices,
+        tripDateId: getTripDateId(),
+      }
+      addReceipt.mutate(form)
+    }
+    if (mode === 'modify_receipt') {
+      const form = {...receiptForm}
+      modifyReceipt.mutate(form)
+    }
+
+    handleCancelFormVisible()
+  }, [mode, receiptForm, tripDates, tripDateIndex])
+
+  const handleConfirmReceiptItem = useCallback((payload) => {
+  }, [])
+
+  const handleOk = useCallback((e, payload?: any) => {
     e.preventDefault()
     
     if (mode === 'create_receipt_item') {
       handleAddReceiptItem()
-      return void 0
+      return
+    }
+
+    if (mode === 'modify_receipt_item') {
+      handleConfirmReceiptItem(payload)
+      return
     }
 
     handleConfirmReceiptForm()
