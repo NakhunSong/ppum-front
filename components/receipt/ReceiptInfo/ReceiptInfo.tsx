@@ -18,7 +18,7 @@ export default function ReceiptInfo({
   handleChangeMode,
 }: ReceiptInfoType) {
   const isRelevantReceipt = useMemo(() => {
-    return mode === 'create_receipt' || mode === 'modify_receipt'
+    return mode === 'add_receipt' || mode === 'modify_receipt'
   }, [mode])
   const handleClickName = useCallback((e) => {
     e.stopPropagation()

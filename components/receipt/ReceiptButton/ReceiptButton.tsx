@@ -1,5 +1,5 @@
 import { MouseEventHandler } from 'react';
-import { CreateMode, Mode } from 'types/receipt.type';
+import { Mode } from 'types/receipt.type';
 import styles from './ReceiptButton.module.scss';
 
 type ReceiptButtonType = {
@@ -12,7 +12,7 @@ export default function ReceiptButton({
   onClick,
 }: ReceiptButtonType) {
   const isAdd = (mode: Mode) => {
-    if (mode.includes('create_receipt_item')) {
+    if (mode.includes('add_receipt_item')) {
       return 'add'
     }
     return 'confirm'

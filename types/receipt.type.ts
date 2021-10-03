@@ -1,8 +1,8 @@
-export type CreateMode = 'create_receipt' | 'create_receipt_item'
+export type AddMode = 'add_receipt' | 'add_receipt_item'
 
 export type ModifyMode = 'modify_receipt' | 'modify_receipt_item'
 
-export type Mode = CreateMode | ModifyMode
+export type Mode = AddMode | ModifyMode
 
 export type PriceProperty = 'price' | 'prices'
 
@@ -32,11 +32,16 @@ export interface ReceiptPayloadType {
 export interface ReceiptItemType {
   id?: string
   name: string
-  price: number // individual
+  price?: number // individual
   prices: number // group
+  users?: any
 }
 
 export interface ReceiptType extends ReceiptPayloadType {
   id?: string
   receiptItems: ReceiptItemType[]
+}
+
+export interface ReceiptItemPayloadType extends ReceiptItemType {
+  receiptId: string
 }

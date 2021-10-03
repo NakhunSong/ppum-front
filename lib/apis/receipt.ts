@@ -1,24 +1,40 @@
+import { AxiosResponse } from "axios"
+import { Dispatch } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import { ReceiptPayloadType, ReceiptType } from "types/receipt.type"
+import { actionCreators, ActionTypes } from "stores/receipt/receipt.actions"
+import { ReceiptItemPayloadType, ReceiptItemType, ReceiptPayloadType, ReceiptType } from "types/receipt.type"
 import { backendAPI } from "./api"
 
-export function useReceipts() {
+export function useReceipts(dispatch: Dispatch<ActionTypes>) {
   const queryClient = useQueryClient()
+  const getAccessToken = () => queryClient.getQueryData('accessToken')
   const addReceipt = useMutation(async (payload: ReceiptPayloadType) => {
-    const accessToken = queryClient.getQueryData('accessToken')
     await backendAPI.post('/receipts', payload, {
-      headers: { Authorization: `Bearer ${accessToken}`}
+      headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
     onError: () => console.error('Receipt Add Failure')
   })
   const modifyReceipt = useMutation(async (payload: ReceiptType) => {
-    const accessToken = queryClient.getQueryData('accessToken')
-    await backendAPI.patch<any>(`/receipts/${payload.id}`, payload, {
-      headers: { Authorization: `Bearer ${accessToken}`}
+    await backendAPI.patch(`/receipts/${payload.id}`, payload, {
+      headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
     onError: () => console.error('Receipt Modify Failure')
+  })
+  const modifyReceiptItem = useMutation(async (payload: ReceiptItemPayloadType) => {
+    return await backendAPI.put<ReceiptItemType>(`/receipts/${payload.receiptId}/item/${payload.id}`, {
+      name: payload.name,
+      prices: payload.prices,
+    }, {
+      headers: { Authorization: `Bearer ${getAccessToken()}`}
+    })
+  }, {
+    onSuccess: (response: AxiosResponse) => {
+      const { data } = response
+      dispatch(actionCreators.changeReceiptItem(data))
+    },
+    onError: () => console.error('Receipt Item Modify Failure')
   })
   const getReceipts = (index: number) => useQuery(['receipts', index], () => {
     const tripDates = queryClient.getQueryData<Array<any>>('trip') ?? []
@@ -27,6 +43,7 @@ export function useReceipts() {
   return {
     addReceipt,
     modifyReceipt,
+    modifyReceiptItem,
     getReceipts,
   }
 }

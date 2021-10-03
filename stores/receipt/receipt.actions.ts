@@ -1,4 +1,4 @@
-import { LocationType, Mode, ReceiptItemPropertyType, ReceiptPropertyType, ReceiptType } from "types/receipt.type"
+import { LocationType, Mode, ReceiptItemPropertyType, ReceiptItemType, ReceiptPropertyType, ReceiptType } from "types/receipt.type"
 
 export const ACTION_TYPES = {
   INIT: 'INIT',
@@ -45,7 +45,7 @@ function changeReceipt(payload: ReceiptPropertyType) {
   }
 }
 
-function changeReceiptItem(payload: ReceiptItemPropertyType) {
+function changeReceiptItem(payload: ReceiptItemType) {
   return {
     type: ACTION_TYPES.CHANGE_RECEIPT_ITEM,
     payload,

@@ -1,7 +1,7 @@
 import MobileTemplate from "components/template/MobileTemplate"
 import { useCallback, useEffect, useRef, useState } from "react"
 import ReceiptForm from "components/receipt/ReceiptForm"
-import { Mode, ReceiptPropertyKey, ReceiptType } from "types/receipt.type"
+import { Mode, ReceiptItemPayloadType, ReceiptPropertyKey, ReceiptType } from "types/receipt.type"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
@@ -40,7 +40,12 @@ export default function MyTrip() {
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
   const { getTrip } = useTrips()  
-  const { getReceipts, addReceipt, modifyReceipt } = useReceipts()  
+  const {
+    getReceipts,
+    addReceipt,
+    modifyReceipt,
+    modifyReceiptItem,
+  } = useReceipts(dispatch)  
   const { data: tripDates } = getTrip(tripId)
   const { data: receipts = [], isLoading } = getReceipts(tripDateIndex)
 
@@ -126,7 +131,7 @@ export default function MyTrip() {
     const latlng = createMarker(e)
     setActiveMarker(false)
     setTimeout(() => setFormVisible(true), 0)
-    handleChangeMode('create_receipt')
+    handleChangeMode('add_receipt')
     dispatch(actionCreators.addReceipt(latlng))
   }
 
@@ -152,20 +157,12 @@ export default function MyTrip() {
       action = actionCreators.changeReceipt({
         [propertyKey]: value,
       })
-    } else {
-      action = actionCreators.changeReceiptItem({
-        [propertyKey]: value,
-        id,
-      })
     }
 
     dispatch(action)
   }, [])
 
-  const handleAddReceiptItem = useCallback(() => {
-  }, [])
-
-  const handleConfirmReceiptForm = useCallback(() => {
+  const handleConfirmReceipt = useCallback(() => {
     const getTripDateId = () => {
       return tripDates?.[tripDateIndex]?.id ?? null
     }
@@ -188,25 +185,14 @@ export default function MyTrip() {
     handleCancelFormVisible()
   }, [mode, receiptForm, tripDates, tripDateIndex])
 
-  const handleConfirmReceiptItem = useCallback((payload) => {
+  const handleAddReceiptItem = useCallback((payload) => {
+
   }, [])
 
-  const handleOk = useCallback((e, payload?: any) => {
-    e.preventDefault()
-    
-    if (mode === 'create_receipt_item') {
-      handleAddReceiptItem()
-      return
-    }
+  const handleModifyReceiptItem = useCallback((payload: ReceiptItemPayloadType) => {
+    modifyReceiptItem.mutate(payload)
+  }, [])
 
-    if (mode === 'modify_receipt_item') {
-      handleConfirmReceiptItem(payload)
-      return
-    }
-
-    handleConfirmReceiptForm()
-  }, [mode, handleConfirmReceiptForm])
-  
   useEffect(() => {
     const container = document.getElementById('map')
     const options = {
@@ -268,7 +254,7 @@ export default function MyTrip() {
 
   useEffect(() => {
     if (!formVisible) {
-      handleChangeMode('create_receipt_item')
+      handleChangeMode('add_receipt_item')
     }
   }, [formVisible])
 
@@ -289,7 +275,9 @@ export default function MyTrip() {
         handleChangeMode={handleChangeMode}
         onCancel={handleCancelFormVisible}
         onChange={handleChange}
-        onOk={handleOk}
+        handleConfirmReceipt={handleConfirmReceipt}
+        handleAddReceiptItem={handleAddReceiptItem}
+        handleModifyReceiptItem={handleModifyReceiptItem}
       />
       {isLoading
         ? <span>로딩중...</span>

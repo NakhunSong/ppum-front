@@ -20,11 +20,13 @@ export const initialReceiptItem = {
 
 function init(receiptProp) {
   return {
-    mode: 'create_receipt_item',
+    mode: 'add_receipt_item',
     receipt: receiptProp,
     tempReceipt: receiptProp,
   };
 }
+
+
 
 function reducer(state, action: ActionTypes) {
   switch (action.type) {

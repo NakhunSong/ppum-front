@@ -5,7 +5,7 @@ import ReceiptItem from '../ReceiptItem'
 import ReceiptInfo from '../ReceiptInfo'
 import { useCallback, useMemo, useState } from 'react'
 import { usePrevious } from 'hooks/usePrevious'
-import { ReceiptItemType } from 'types/receipt.type'
+import { ReceiptItemPayloadType, ReceiptItemType } from 'types/receipt.type'
 
 export interface ReceiptItemFormType extends ReceiptItemType {
   isEdit?: boolean
@@ -18,7 +18,9 @@ export default function ReceiptForm({
   handleChangeMode,
   onCancel,
   onChange,
-  onOk,
+  handleConfirmReceipt,
+  handleAddReceiptItem,
+  handleModifyReceiptItem,
 }) {
   if (!visible) return null
 
@@ -63,6 +65,30 @@ export default function ReceiptForm({
       }))
     }
   }, [receiptItemForm])
+  
+
+  const handleOk = useCallback((e) => {
+    e.preventDefault()
+    const getReceiptItemPayload = () => ({
+      name: receiptItemForm.name,
+      prices: receiptItemForm.prices,
+      receiptId: receipt.id,
+    })
+
+    if (mode === 'add_receipt_item') {
+      handleAddReceiptItem(receiptItemForm)
+    }
+
+    if (mode === 'modify_receipt_item') {
+      const payload: ReceiptItemPayloadType = {
+        ...getReceiptItemPayload(),
+        id: receiptItemForm.id,
+      }
+      handleModifyReceiptItem(payload)
+    }
+
+    handleConfirmReceipt()
+  }, [mode, handleConfirmReceipt, receipt, receiptItemForm])
 
   return (
     <div className={styles.wrapper}>
@@ -83,7 +109,7 @@ export default function ReceiptForm({
         </div>
         <ReceiptButton
           mode={mode}
-          onClick={onOk}
+          onClick={handleOk}
         />
       </form>
     </div>
