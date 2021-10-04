@@ -1,14 +1,14 @@
 import classNames from 'classnames'
 import Input from 'components/common/Input'
 import { useCallback, useMemo } from 'react'
-import { Mode, ReceiptType } from 'types/receipt.type'
+import { Mode, ModeType, ReceiptType } from 'types/receipt.type'
 import styles from './ReceiptInfo.module.scss'
 
 type ReceiptInfoType = {
-  mode: Mode,
+  mode: ModeType,
   receipt: ReceiptType,
   onChange: Function,
-  handleChangeMode: (mode: Mode) => void,
+  handleChangeMode: (mode: ModeType) => void,
 }
 
 export default function ReceiptInfo({
@@ -22,7 +22,7 @@ export default function ReceiptInfo({
   }, [mode])
   const handleClickName = useCallback((e) => {
     e.stopPropagation()
-    handleChangeMode('modify_receipt')
+    handleChangeMode(Mode.ModifyReceipt)
   }, [])
 
   return (

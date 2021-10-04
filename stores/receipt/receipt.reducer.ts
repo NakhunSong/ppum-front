@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { useReducer } from "react"
+import { Mode } from "types/receipt.type";
 import { ActionTypes, ACTION_TYPES } from "./receipt.actions"
 
 export const initialReceipt = ()=> {
@@ -20,7 +21,7 @@ export const initialReceiptItem = {
 
 function init(receiptProp) {
   return {
-    mode: 'add_receipt_item',
+    mode: Mode.Plus,
     receipt: receiptProp,
     tempReceipt: receiptProp,
   };
@@ -44,6 +45,18 @@ function reducer(state, action: ActionTypes) {
         receipt: {
           ...initialReceipt(),
           location: action.payload,
+        }
+      }
+    }
+    case ACTION_TYPES.ADD_RECEIPT_ITEM: {
+      return {
+        ...state,
+        receipt: {
+          ...state.receipt,
+          receiptItems: [
+            action.payload,
+            ...state.receipt.receiptItems,
+          ],
         }
       }
     }
@@ -73,7 +86,7 @@ function reducer(state, action: ActionTypes) {
       const { id, ...rest } = action.payload
       const receiptItems = state.receipt.receiptItems.map(r => {
         if (r.id === id) {
-          return {...r, ...rest}
+          return { id, ...rest}
         }
         return r
       })
@@ -82,27 +95,6 @@ function reducer(state, action: ActionTypes) {
         receipt: {
           ...state.receipt,
           receiptItems,
-        },
-      }
-    }
-    case ACTION_TYPES.CREATE_RECEIPT: {
-      return {
-        ...state,
-        receipt: {
-          ...state.receipt,
-          ...action.payload,
-        }
-      }
-    }
-    case ACTION_TYPES.CREATE_RECEIPT_ITEM: {
-      return {
-        ...state,
-        receipt: {
-          ...state.receipt,
-          receiptItem: {
-            ...state.receiptItem,
-            ...action.payload,
-          }
         }
       }
     }

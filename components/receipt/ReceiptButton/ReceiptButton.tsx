@@ -1,32 +1,37 @@
-import { MouseEventHandler } from 'react';
-import { Mode } from 'types/receipt.type';
+import { MouseEventHandler, useMemo } from 'react';
+import { Mode, ModeType } from 'types/receipt.type';
 import styles from './ReceiptButton.module.scss';
 
 type ReceiptButtonType = {
-  mode: Mode;
-  onClick: MouseEventHandler<HTMLButtonElement>;
+  mode: ModeType;
+  handleAdd: MouseEventHandler<HTMLButtonElement>;
+  handleOk: MouseEventHandler<HTMLButtonElement>;
 }
 
 export default function ReceiptButton({
   mode,
-  onClick,
+  handleAdd,
+  handleOk,
 }: ReceiptButtonType) {
-  const isAdd = (mode: Mode) => {
-    if (mode.includes('add_receipt_item')) {
+  const isAdd = useMemo(() => {
+    return mode === Mode.Plus
+  }, [mode])
+  const icon = useMemo(() => {
+    if (isAdd) {
       return 'add'
     }
     return 'confirm'
-  }
+  }, [isAdd])
 
   return (
     <div className={styles.wrapper}>
       <button
         className={styles.button}
-        onClick={onClick}
+        onClick={isAdd ? handleAdd : handleOk}
       >
         <img
           className={styles.button_icon}
-          src={`/images/receipt/${isAdd(mode)}.svg`}
+          src={`/images/receipt/${icon}.svg`}
           alt={`${mode}`}
         />
       </button>

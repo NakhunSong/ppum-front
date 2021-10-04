@@ -1,8 +1,12 @@
-export type AddMode = 'add_receipt' | 'add_receipt_item'
+export enum Mode {
+  AddReceipt = 'add_receipt',
+  AddReceiptItem = 'add_receipt_item',
+  ModifyReceipt = 'modify_receipt',
+  ModifyReceiptItem = 'modify_receipt_item',
+  Plus = 'plus',
+}
 
-export type ModifyMode = 'modify_receipt' | 'modify_receipt_item'
-
-export type Mode = AddMode | ModifyMode
+export type ModeType = Mode
 
 export type PriceProperty = 'price' | 'prices'
 

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { useClickoutside } from 'hooks/useClickoutside'
 import ReceiptButton from '../ReceiptButton'
 import styles from './ReceiptForm.module.scss'
@@ -5,10 +6,10 @@ import ReceiptItem from '../ReceiptItem'
 import ReceiptInfo from '../ReceiptInfo'
 import { useCallback, useMemo, useState } from 'react'
 import { usePrevious } from 'hooks/usePrevious'
-import { ReceiptItemPayloadType, ReceiptItemType } from 'types/receipt.type'
+import { Mode, ModeType, ReceiptItemPayloadType, ReceiptItemType } from 'types/receipt.type'
 
 export interface ReceiptItemFormType extends ReceiptItemType {
-  isEdit?: boolean
+  mode?: ModeType
 }
 
 export default function ReceiptForm({
@@ -32,7 +33,7 @@ export default function ReceiptForm({
   const [innerReceiptItems, setInnerReceiptItems] = useState<ReceiptItemFormType[]>(receiptItems)
   
   if (receiptItems !== innerReceiptItems && receiptItems !== preReceiptItems) {
-    setInnerReceiptItems(receiptItems)
+    setInnerReceiptItems(_.cloneDeep(receiptItems))
   }
 
   const handleClickReceiptItemModifyButton = useCallback((e, id: string, isEdit: boolean) => {
@@ -40,17 +41,19 @@ export default function ReceiptForm({
     if (!isEdit) {
       setReceiptItemForm(innerReceiptItems.find(i => i.id === id))
     }
-    handleChangeMode(`${isEdit ? 'create' : 'modify'}_receipt_item`)
+    handleChangeMode(isEdit
+      ? Mode.Plus
+      : Mode.ModifyReceiptItem)
     setInnerReceiptItems(items => {
-      const newItems = items.map(i => {
-        if (i.id === id) {
+      const newItems = items.map(item => {
+        if (item.id === id) {
           if (!isEdit) {
-            i.isEdit = true
+            item.mode = Mode.ModifyReceiptItem
           } else {
-            delete i.isEdit
+            delete item.mode
           }
         }
-        return i
+        return item
       })
       return newItems
     })
@@ -58,7 +61,6 @@ export default function ReceiptForm({
 
   const handleChangeReceiptItemInput = useCallback((key: string) => {
     return (e) => {
-      console.log(e.target.value)
       setReceiptItemForm(item => ({
         ...item,
         [key]: e.target.value,
@@ -66,6 +68,17 @@ export default function ReceiptForm({
     }
   }, [receiptItemForm])
   
+  const handleAdd = useCallback((e) => {
+    e.preventDefault()
+    const payload = { name: '', prices: 0, mode: Mode.AddReceiptItem }
+    handleChangeMode(Mode.AddReceiptItem)
+    setReceiptItemForm(payload)
+    setInnerReceiptItems(items => {
+      const newItems = [...items]
+      newItems.unshift(payload)
+      return newItems
+    })
+  }, [])
 
   const handleOk = useCallback((e) => {
     e.preventDefault()
@@ -75,19 +88,23 @@ export default function ReceiptForm({
       receiptId: receipt.id,
     })
 
-    if (mode === 'add_receipt_item') {
-      handleAddReceiptItem(receiptItemForm)
-    }
-
-    if (mode === 'modify_receipt_item') {
-      const payload: ReceiptItemPayloadType = {
-        ...getReceiptItemPayload(),
-        id: receiptItemForm.id,
+    switch (mode) {
+      case Mode.AddReceiptItem: {
+        handleAddReceiptItem(getReceiptItemPayload())
+        break
       }
-      handleModifyReceiptItem(payload)
+      case Mode.ModifyReceiptItem: {
+        const payload: ReceiptItemPayloadType = {
+          ...getReceiptItemPayload(),
+          id: receiptItemForm.id,
+        }
+        handleModifyReceiptItem(payload)
+        break
+      }
+      default: {
+        handleConfirmReceipt()
+      }
     }
-
-    handleConfirmReceipt()
   }, [mode, handleConfirmReceipt, receipt, receiptItemForm])
 
   return (
@@ -109,7 +126,8 @@ export default function ReceiptForm({
         </div>
         <ReceiptButton
           mode={mode}
-          onClick={handleOk}
+          handleAdd={handleAdd}
+          handleOk={handleOk}
         />
       </form>
     </div>

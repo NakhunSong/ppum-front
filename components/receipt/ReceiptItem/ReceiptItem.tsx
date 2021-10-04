@@ -1,5 +1,6 @@
 import { TextButton } from 'components/common/Button/TextButton'
 import Input from 'components/common/Input'
+import { Mode } from 'types/receipt.type'
 import { ReceiptItemFormType } from '../ReceiptForm/ReceiptForm'
 import styles from './ReceiptItem.module.scss'
 
@@ -16,11 +17,10 @@ export default function ReceiptItem({
   onChange,
   onClick,
 }: ReceiptItemProps) {
-
   return (receiptItems?.length !== 0 && (
     <div className={styles.wrapper}>
       {receiptItems.map((item, index) => {
-        const { isEdit } = item
+        const { mode } = item
         return (
         <div
           key={`receipt_item_${index}`}
@@ -30,17 +30,19 @@ export default function ReceiptItem({
             <span>
               {`내역 ${index + 1}`}
             </span>
-            <span className={styles.modify_button}>
-              <TextButton
-                onClick={(e) => onClick(e, item.id, isEdit)}
-              >
-                {!isEdit ? '수정' : '취소'}
-              </TextButton>
-            </span>
+            {mode !== Mode.AddReceiptItem && (
+              <span className={styles.modify_button}>
+                <TextButton
+                  onClick={(e) => onClick(e, item.id, !!mode)}
+                >
+                  {!mode ? '수정' : '취소'}
+                </TextButton>
+              </span>
+            )}
           </div>
           <div>
             <Input.InputWrapper marginBottom>
-              {isEdit ? (
+              {mode ? (
                 <Input
                   type="text"
                   placeholder="항목명"
@@ -59,7 +61,7 @@ export default function ReceiptItem({
               )}
             </Input.InputWrapper>
             <Input.InputWrapper>
-              {isEdit ? (
+              {mode ? (
                 <Input
                   type="number"
                   placeholder="금액"

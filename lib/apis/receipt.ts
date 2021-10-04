@@ -22,6 +22,20 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
   }, {
     onError: () => console.error('Receipt Modify Failure')
   })
+  const addReceiptItem = useMutation(async (payload: ReceiptItemPayloadType) => {
+    return backendAPI.post<ReceiptItemType>(`/receipts/${payload.receiptId}/item`, {
+      name: payload.name,
+      prices: payload.prices,
+    }, {
+      headers: { Authorization: `Bearer ${getAccessToken()}`}
+    })
+  }, {
+    onSuccess: (response: AxiosResponse) => {
+      const { data } = response
+      dispatch(actionCreators.addReceiptItem(data))
+    },
+    onError: () => console.error('Receipt Item Add Failure')
+  })
   const modifyReceiptItem = useMutation(async (payload: ReceiptItemPayloadType) => {
     return await backendAPI.put<ReceiptItemType>(`/receipts/${payload.receiptId}/item/${payload.id}`, {
       name: payload.name,
@@ -42,6 +56,7 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
   })
   return {
     addReceipt,
+    addReceiptItem,
     modifyReceipt,
     modifyReceiptItem,
     getReceipts,
