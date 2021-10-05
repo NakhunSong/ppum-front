@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { useClickoutside } from 'hooks/useClickoutside'
 import ReceiptButton from '../ReceiptButton'
 import styles from './ReceiptForm.module.scss'
@@ -33,7 +32,7 @@ export default function ReceiptForm({
   const [innerReceiptItems, setInnerReceiptItems] = useState<ReceiptItemFormType[]>(receiptItems)
   
   if (receiptItems !== innerReceiptItems && receiptItems !== preReceiptItems) {
-    setInnerReceiptItems(_.cloneDeep(receiptItems))
+    setInnerReceiptItems(receiptItems)
   }
 
   const handleClickReceiptItemModifyButton = useCallback((e, id: string, isEdit: boolean) => {
@@ -61,9 +60,10 @@ export default function ReceiptForm({
 
   const handleChangeReceiptItemInput = useCallback((key: string) => {
     return (e) => {
+      let { value, valueAsNumber } = e.target
       setReceiptItemForm(item => ({
         ...item,
-        [key]: e.target.value,
+        [key]: valueAsNumber || value,
       }))
     }
   }, [receiptItemForm])

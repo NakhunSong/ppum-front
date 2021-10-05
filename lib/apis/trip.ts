@@ -26,7 +26,7 @@ export function useTrips() {
   })
   const getTrips = (setter?: React.Dispatch<string>) => useQuery('trips', getTripsAPI, {
     onSuccess: (data) => {
-      setter(data?.[0].id)
+      setter(data?.[0]?.id)
     },
     onError: () => console.log('Trips Get Error')
   })
