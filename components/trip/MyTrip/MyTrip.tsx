@@ -27,7 +27,7 @@ export default function MyTrip() {
 
   const [{
     mode,
-    receipt: receiptForm,
+    receipt: receiptState,
   }, dispatch] = useReceiptForm()
 
   const map = useRef()
@@ -36,7 +36,6 @@ export default function MyTrip() {
   const [activeMarker, setActiveMarker] = useState(false)
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
-  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptType>(null)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
 
   const { getTrip } = useTrips()  
@@ -54,6 +53,10 @@ export default function MyTrip() {
     dispatch(actionCreators.changeMode(modeProp))
   }, [])
 
+  const handleSelectReceipt = (receiptProp) => {
+    dispatch(actionCreators.init(receiptProp))
+  }
+
   const handleCancelFormVisible = useCallback(() => {
     setFormVisible(false)
   }, [])
@@ -62,7 +65,8 @@ export default function MyTrip() {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
       setTimeout(() => setFormVisible(true), 0)
       if (receiptProp) {
-        setSelectedReceipt(receiptProp)
+        // setSelectedReceipt(receiptProp)
+        handleSelectReceipt(receiptProp)
       }
     })
     window.kakao.maps.event.addListener(marker, 'mouseover', function() {
@@ -169,7 +173,7 @@ export default function MyTrip() {
 
     switch (mode) {
       case Mode.AddReceipt: {
-        const { location, name, prices } = receiptForm
+        const { location, name, prices } = receiptState
         const form = {
           location,
           name,
@@ -180,15 +184,15 @@ export default function MyTrip() {
         break
       }
       case Mode.ModifyReceipt: {
-        const form = {...receiptForm}
+        const form = {...receiptState}
         modifyReceipt.mutate(form)
         break
       }
-      default: {
-        handleCancelFormVisible()
-      }
+      default: console.error('Not Availble Mode')
     }
-  }, [mode, receiptForm, tripDates, tripDateIndex])
+
+    handleCancelFormVisible()
+  }, [mode, receiptState, tripDates, tripDateIndex])
 
   const handleAddReceiptItem = useCallback((payload: ReceiptItemPayloadType) => {
     addReceiptItem.mutate(payload)
@@ -240,8 +244,8 @@ export default function MyTrip() {
   }, [receipts])
 
   useEffect(() => {
-    if (selectedReceipt) {
-      const { location, name } = selectedReceipt
+    if (receiptState) {
+      const { location, name } = receiptState
       const { lat, lng } = location
       const latlng = new window.kakao.maps.LatLng(lat, lng)
       setMarkerName({
@@ -249,9 +253,7 @@ export default function MyTrip() {
         name,
       })
     }
-
-    dispatch(actionCreators.init(selectedReceipt))
-  }, [selectedReceipt])
+  }, [receiptState])
 
   useEffect(() => {
     if (!activeMarker) {
@@ -276,7 +278,7 @@ export default function MyTrip() {
     >
       <KakaoMap draggingMarker={draggingMarker} />
       <ReceiptForm
-        receipt={receiptForm}
+        receipt={receiptState}
         visible={formVisible}
         mode={mode}
         handleChangeMode={handleChangeMode}
@@ -289,7 +291,10 @@ export default function MyTrip() {
       {isLoading
         ? <span>로딩중...</span>
         : (
-        <ReceiptSelector receipts={receipts} setSelectedReceipt={setSelectedReceipt} />
+          <ReceiptSelector
+            receipts={receipts}
+            handleSelectReceipt={handleSelectReceipt}
+          />
       )}
       <TripDateSelector
         tripDates={tripDates}

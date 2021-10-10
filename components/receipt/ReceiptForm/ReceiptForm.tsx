@@ -5,7 +5,8 @@ import ReceiptItem from '../ReceiptItem'
 import ReceiptInfo from '../ReceiptInfo'
 import { useCallback, useMemo, useState } from 'react'
 import { usePrevious } from 'hooks/usePrevious'
-import { Mode, ModeType, ReceiptItemPayloadType, ReceiptItemType } from 'types/receipt.type'
+import { Mode, ModeType, ReceiptItemPayloadType, ReceiptItemType, ReceiptPayloadType } from 'types/receipt.type'
+import _ from 'lodash'
 
 export interface ReceiptItemFormType extends ReceiptItemType {
   mode?: ModeType
@@ -28,8 +29,8 @@ export default function ReceiptForm({
 
   const receiptItems = useMemo(() => receipt.receiptItems, [receipt])
   const preReceiptItems = usePrevious(receiptItems)
-  const [receiptItemForm, setReceiptItemForm] = useState<ReceiptItemFormType>(null)
   const [innerReceiptItems, setInnerReceiptItems] = useState<ReceiptItemFormType[]>(receiptItems)
+  const [receiptItemForm, setReceiptItemForm] = useState<ReceiptItemFormType>(null)
   
   if (receiptItems !== innerReceiptItems && receiptItems !== preReceiptItems) {
     setInnerReceiptItems(receiptItems)
@@ -38,7 +39,9 @@ export default function ReceiptForm({
   const handleClickReceiptItemModifyButton = useCallback((e, id: string, isEdit: boolean) => {
     e.stopPropagation()
     if (!isEdit) {
-      setReceiptItemForm(innerReceiptItems.find(i => i.id === id))
+      setReceiptItemForm(
+        _.cloneDeep(innerReceiptItems.find(i => i.id === id))
+      )
     }
     handleChangeMode(isEdit
       ? Mode.Plus

@@ -4,10 +4,13 @@ import styles from './ReceiptSelector.module.scss'
 
 type ReceiptSelectorProps = {
   receipts: Array<any>,
-  setSelectedReceipt: React.Dispatch<Object>,
+  handleSelectReceipt: Function,
 }
 
-export default function ReceiptSelector({ receipts, setSelectedReceipt }: ReceiptSelectorProps) {
+export default function ReceiptSelector({
+  receipts,
+  handleSelectReceipt,
+}: ReceiptSelectorProps) {
   const {
     $target,
     $scroller,
@@ -17,7 +20,9 @@ export default function ReceiptSelector({ receipts, setSelectedReceipt }: Receip
 
   useEffect(() => {
     const selectedReceipt = receipts?.[selectedIndex] ?? null
-    setSelectedReceipt(selectedReceipt)
+    if (selectedReceipt) {
+      handleSelectReceipt(selectedReceipt)
+    }
   }, [receipts, selectedIndex])
 
   return (

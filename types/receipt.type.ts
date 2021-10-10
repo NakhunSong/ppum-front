@@ -27,10 +27,11 @@ export type ReceiptItemPropertyType = {
 } & ReceiptPropertyType
 
 export interface ReceiptPayloadType {
+  id?: string
   location: LocationType
   name: string
   prices: number
-  tripDateId: string
+  tripDateId?: string
 }
 
 export interface ReceiptItemType {
@@ -42,7 +43,6 @@ export interface ReceiptItemType {
 }
 
 export interface ReceiptType extends ReceiptPayloadType {
-  id?: string
   receiptItems: ReceiptItemType[]
 }
 

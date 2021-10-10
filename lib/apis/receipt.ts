@@ -9,10 +9,39 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
   const queryClient = useQueryClient()
   const getAccessToken = () => queryClient.getQueryData('accessToken')
   const addReceipt = useMutation(async (payload: ReceiptPayloadType) => {
-    await backendAPI.post('/receipts', payload, {
+    return await backendAPI.post('/receipts', payload, {
       headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
+    onSuccess: (response: AxiosResponse) => {
+      const { data } = response
+      const {
+        id,
+        location,
+        name,
+        prices,
+        tripDate,
+      } = data
+      const newReceipt = {
+        id,
+        location,
+        name,
+        prices,
+        receiptItems: [],
+      }
+      queryClient.setQueryData('trip', (prevTrip: any) => {
+        return prevTrip.map(p => {
+          if (p.id === tripDate.id) {
+            p.receipts = p.receipts.concat(newReceipt)
+            return p
+          }
+          return p
+        })
+      })
+      queryClient.setQueryData(['receipts', 0], (prevReceipts: any) => {
+        return prevReceipts.concat(newReceipt)
+      })
+    },
     onError: () => console.error('Receipt Add Failure')
   })
   const modifyReceipt = useMutation(async (payload: ReceiptType) => {
