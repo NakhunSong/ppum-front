@@ -14,14 +14,13 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
     })
   }, {
     onSuccess: (response: AxiosResponse) => {
-      const { data } = response
       const {
         id,
         location,
         name,
         prices,
         tripDate,
-      } = data
+      } = response.data ?? {}
       const newReceipt = {
         id,
         location,
@@ -30,12 +29,12 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
         receiptItems: [],
       }
       queryClient.setQueryData('trip', (prevTrip: any) => {
-        return prevTrip.map(p => {
-          if (p.id === tripDate.id) {
-            p.receipts = p.receipts.concat(newReceipt)
-            return p
+        return prevTrip.map(prev => {
+          if (prev.id === tripDate.id) {
+            prev.receipts = prev.receipts.concat(newReceipt)
+            return prev
           }
-          return p
+          return prev
         })
       })
       queryClient.setQueryData(['receipts', 0], (prevReceipts: any) => {
@@ -45,10 +44,43 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
     onError: () => console.error('Receipt Add Failure')
   })
   const modifyReceipt = useMutation(async (payload: ReceiptType) => {
-    await backendAPI.patch(`/receipts/${payload.id}`, payload, {
+    return await backendAPI.patch(`/receipts/${payload.id}`, payload, {
       headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
+    onSuccess: (response: AxiosResponse) => {
+      const { id, location, name, tripDate } = response?.data ?? {}
+      queryClient.setQueryData('trip', (prevTrip: any) => {
+        return prevTrip.map(prev => {
+          if (prev.id === tripDate.id) {
+            prev.receipts = prev.receipts.map(p => {
+              if (p.id === id) {
+                return {
+                  ...p,
+                  location,
+                  name,
+                }
+              }
+              return p
+            })
+            return prev
+          }
+          return prev
+        })
+      })
+      queryClient.setQueryData(['receipts', 0], (prevReceipts: any) => {
+        return prevReceipts.map(prev => {
+          if (prev.id === id) {
+            return {
+              ...prev,
+              location,
+              name,
+            }
+          }
+          return prev
+        })
+      })
+    },
     onError: () => console.error('Receipt Modify Failure')
   })
   const addReceiptItem = useMutation(async (payload: ReceiptItemPayloadType) => {
