@@ -1,7 +1,7 @@
 import MobileTemplate from "components/template/MobileTemplate"
 import { useCallback, useEffect, useRef, useState } from "react"
 import ReceiptForm from "components/receipt/ReceiptForm"
-import { Mode, ModeType, ReceiptItemPayloadType, ReceiptPropertyKey, ReceiptType } from "types/receipt.type"
+import { Mode, ModeType, ReceiptItemPayloadType, ReceiptPropertyKey } from "types/receipt.type"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
@@ -12,6 +12,7 @@ import { useReceipts } from "lib/apis/receipt"
 import { useReceiptForm } from "stores/receipt/receipt.reducer"
 import { InputChangeEventTargetType } from "types/common/Event"
 import { actionCreators } from "stores/receipt/receipt.actions"
+import Modal from "components/common/Modal"
 
 declare global {
   interface Window {
@@ -37,6 +38,10 @@ export default function MyTrip() {
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
+  const [confirmVisible, setConfirmVisible] = useState<boolean>(false)
+  const [lastLocation, setLastLocation] = useState(null)
+  const [movedLocation, setMovedLocation] = useState(null)
+  const [movedId, setMovedId] = useState(null)
 
   const { getTrip } = useTrips()  
   const {
@@ -48,6 +53,10 @@ export default function MyTrip() {
   } = useReceipts(dispatch)  
   const { data: tripDates } = getTrip(tripId)
   const { data: receipts = [], isLoading } = getReceipts(tripDateIndex)
+
+  const handleCancel = useCallback(() => {
+    setConfirmVisible(false)
+  }, [])
 
   const handleChangeMode = useCallback((modeProp: ModeType) => {
     dispatch(actionCreators.changeMode(modeProp))
@@ -65,7 +74,6 @@ export default function MyTrip() {
     window.kakao.maps.event.addListener(marker, 'click', function(e) {
       setTimeout(() => setFormVisible(true), 0)
       if (receiptProp) {
-        // setSelectedReceipt(receiptProp)
         handleSelectReceipt(receiptProp)
       }
     })
@@ -84,15 +92,19 @@ export default function MyTrip() {
       const image = new window.kakao.maps.MarkerImage(imageSrc, size)
       marker.setImage(image)
       setDraggingMarker(true)
+      setLastLocation(marker.getPosition())
     })
     window.kakao.maps.event.addListener(marker, 'dragend', function() {
       const size = new window.kakao.maps.Size(50, 50)
       const image = new window.kakao.maps.MarkerImage(imageSrc, size)
       marker.setImage(image)
       setDraggingMarker(false)
-      const location = marker.getPosition()
-      console.log('location: ', location)
-      // 위치 변경 API 실행
+
+      if (receiptProp) {
+        setConfirmVisible(true)
+        setMovedLocation(marker.getPosition())
+        setMovedId(receiptProp.id)
+      }
     })
   }, [])
 
@@ -300,6 +312,12 @@ export default function MyTrip() {
         tripDates={tripDates}
         setTripDateIndex={setTripDateIndex}
       />
+      <Modal
+        visible={confirmVisible}
+        onCancel={handleCancel}
+      >
+        hihi
+      </Modal>
     </MobileTemplate>
   )
 }
