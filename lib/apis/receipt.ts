@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios"
 import { Dispatch } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { actionCreators, ActionTypes } from "stores/receipt/receipt.actions"
@@ -13,33 +12,8 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
       headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
-    onSuccess: (response: AxiosResponse) => {
-      const {
-        id,
-        location,
-        name,
-        prices,
-        tripDate,
-      } = response.data ?? {}
-      const newReceipt = {
-        id,
-        location,
-        name,
-        prices,
-        receiptItems: [],
-      }
-      queryClient.setQueryData('trip', (prevTrip: any) => {
-        return prevTrip.map(prev => {
-          if (prev.id === tripDate.id) {
-            prev.receipts = prev.receipts.concat(newReceipt)
-            return prev
-          }
-          return prev
-        })
-      })
-      queryClient.setQueryData(['receipts', 0], (prevReceipts: any) => {
-        return prevReceipts.concat(newReceipt)
-      })
+    onSuccess: () => {
+      queryClient.invalidateQueries('trip')
     },
     onError: () => console.error('Receipt Add Failure')
   })
@@ -48,38 +22,8 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
       headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
-    onSuccess: (response: AxiosResponse) => {
-      const { id, location, name, tripDate } = response?.data ?? {}
-      queryClient.setQueryData('trip', (prevTrip: any) => {
-        return prevTrip.map(prev => {
-          if (prev.id === tripDate.id) {
-            prev.receipts = prev.receipts.map(p => {
-              if (p.id === id) {
-                return {
-                  ...p,
-                  location,
-                  name,
-                }
-              }
-              return p
-            })
-            return prev
-          }
-          return prev
-        })
-      })
-      queryClient.setQueryData(['receipts', 0], (prevReceipts: any) => {
-        return prevReceipts.map(prev => {
-          if (prev.id === id) {
-            return {
-              ...prev,
-              location,
-              name,
-            }
-          }
-          return prev
-        })
-      })
+    onSuccess: () => {
+      queryClient.invalidateQueries('trip')
     },
     onError: () => console.error('Receipt Modify Failure')
   })
@@ -91,9 +35,8 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
       headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
-    onSuccess: (response: AxiosResponse) => {
-      const { data } = response
-      dispatch(actionCreators.addReceiptItem(data))
+    onSuccess: () => {
+      queryClient.invalidateQueries('trip')
     },
     onError: () => console.error('Receipt Item Add Failure')
   })
@@ -105,9 +48,8 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
       headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
-    onSuccess: (response: AxiosResponse) => {
-      const { data } = response
-      dispatch(actionCreators.changeReceiptItem(data))
+    onSuccess: () => {
+      queryClient.invalidateQueries('trip')
     },
     onError: () => console.error('Receipt Item Modify Failure')
   })
