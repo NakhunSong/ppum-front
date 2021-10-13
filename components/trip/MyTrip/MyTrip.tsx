@@ -31,20 +31,20 @@ export default function MyTrip() {
     receipt: receiptState,
   }, dispatch] = useReceiptForm()
 
-  const map = useRef()
-  const info = useRef(null)
-  const markers = useRef([])
-  const selectedMarker = useRef()
-  const lastLocation = useRef()
-  const draggedLocation = useRef()
-  const draggedReceiptId = useRef()
-  const [activeMarker, setActiveMarker] = useState(false)
-  const [draggingMarker, setDraggingMarker] = useState(false)
-  const [formVisible, setFormVisible] = useState(false)
+  const map = useRef<any>(null)
+  const info = useRef<any>(null)
+  const markers = useRef<Array<any>>([])
+  const selectedMarker = useRef<any>(null)
+  const lastLocation = useRef<any>(null)
+  const draggedLocation = useRef<any>(null)
+  const draggedReceiptId = useRef<string>(null)
+  const [activeMarker, setActiveMarker] = useState<boolean>(false)
+  const [draggingMarker, setDraggingMarker] = useState<boolean>(false)
+  const [formVisible, setFormVisible] = useState<boolean>(false)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
   const [confirmVisible, setConfirmVisible] = useState<boolean>(false)
 
-  const { getTrip } = useTrips()  
+  const { getTrip } = useTrips()
   const {
     getReceipts,
     addReceipt,
@@ -54,10 +54,24 @@ export default function MyTrip() {
   } = useReceipts(dispatch)  
   const { data: tripDates } = getTrip(tripId)
   const { data: receipts = [], isLoading } = getReceipts(tripDateIndex)
+
   const handleCancelModal = useCallback(() => {
     setConfirmVisible(false)
-    if (selectedMarker.current) {
+    if (selectedMarker.current && lastLocation.current) {
       selectedMarker.current.setPosition(lastLocation.current)
+      lastLocation.current = null
+      selectedMarker.current = null
+    }
+  }, [])
+
+  const handleOkModal = useCallback(() => {
+    setConfirmVisible(false)
+    if (draggedLocation.current) {
+      const { Ma: lat, La: lng } = draggedLocation.current
+      modifyReceipt.mutate({
+        id: draggedReceiptId.current,
+        location: { lat, lng },
+      })
     }
   }, [])
 
@@ -319,8 +333,9 @@ export default function MyTrip() {
       <Modal
         visible={confirmVisible}
         onCancel={handleCancelModal}
+        onOk={handleOkModal}
       >
-        hihi
+        마커의 위치를 수정하시겠습니까?
       </Modal>
     </MobileTemplate>
   )
