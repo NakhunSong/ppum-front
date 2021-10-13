@@ -1,5 +1,6 @@
-import Logo from 'components/base/Logo'
+import CircularProgress from '@mui/material/CircularProgress'
 import Button from 'components/common/Button'
+import Logo from 'components/base/Logo'
 import Input from 'components/common/Input'
 import { useLoggedInCheck, useLogin } from 'lib/apis/auth'
 import { useRouter } from 'next/dist/client/router'
@@ -29,9 +30,7 @@ export default function LoginForm() {
 
   if (data) {
     return (
-      <div>
-        로딩 중
-      </div>
+      <CircularProgress />
     )  
   }
 
@@ -53,7 +52,13 @@ export default function LoginForm() {
           />
           <Button onClick={handleLogin}>
             {mutation.isLoading
-              ? '로딩중'
+              ? (
+                <CircularProgress
+                  color="inherit"
+                  size={15}
+                  style={{ verticalAlign: 'middle' }}
+                />
+              )
               : '로그인'}
           </Button>
         </Input.InputWrapper>

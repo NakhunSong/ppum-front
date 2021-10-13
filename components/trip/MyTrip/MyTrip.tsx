@@ -1,18 +1,19 @@
-import MobileTemplate from "components/template/MobileTemplate"
-import { useCallback, useEffect, useRef, useState } from "react"
+import CircularProgress from '@mui/material/CircularProgress'
+import Modal from "components/common/Modal"
 import ReceiptForm from "components/receipt/ReceiptForm"
-import { Mode, ModeType, ReceiptItemPayloadType, ReceiptPropertyKey } from "types/receipt.type"
 import ReceiptSelector from "components/receipt/ReceiptSelector"
+import MobileTemplate from "components/template/MobileTemplate"
+import { useTrips } from "lib/apis/trip"
+import { useReceipts } from "lib/apis/receipt"
+import { useRouter } from "next/dist/client/router"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { actionCreators } from "stores/receipt/receipt.actions"
+import { useReceiptForm } from "stores/receipt/receipt.reducer"
+import { InputChangeEventTargetType } from "types/common/Event"
+import { Mode, ModeType, ReceiptItemPayloadType, ReceiptPropertyKey } from "types/receipt.type"
 import HeaderMenu from "../HeaderMenu"
 import KakaoMap from "../KakaoMap"
 import TripDateSelector from "../TripDateSelector"
-import { useRouter } from "next/dist/client/router"
-import { useTrips } from "lib/apis/trip"
-import { useReceipts } from "lib/apis/receipt"
-import { useReceiptForm } from "stores/receipt/receipt.reducer"
-import { InputChangeEventTargetType } from "types/common/Event"
-import { actionCreators } from "stores/receipt/receipt.actions"
-import Modal from "components/common/Modal"
 
 declare global {
   interface Window {
@@ -319,7 +320,7 @@ export default function MyTrip() {
         handleModifyReceiptItem={handleModifyReceiptItem}
       />
       {isLoading
-        ? <span>로딩중...</span>
+        ? <CircularProgress size={24} />
         : (
           <ReceiptSelector
             receipts={receipts}

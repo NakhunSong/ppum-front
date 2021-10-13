@@ -1,5 +1,6 @@
 import { forwardRef, ReactElement } from 'react'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
+import { RefObject } from 'react-transition-group/node_modules/@types/react'
 
 const Wrapper = styled.div`
   position: relative;
@@ -9,8 +10,8 @@ const Wrapper = styled.div`
   height: 100%;
 `
 
-const ScrollerWrapper = styled.div`
-  position: absolute;
+const ScrollerWrapper = styled.div<ScrollerWrapperProps>`
+  // position: absolute;
   cursor: pointer;
   overflow-x: scroll;
   transition: all .2s ease;
@@ -27,7 +28,7 @@ const ScrollerWrapper = styled.div`
   }
 `
 
-const Target = styled.div`
+const Target = styled.div<TargetProps>`
   position: absolute;
   display: inline-block;
   margin-left: 50%;
@@ -36,7 +37,7 @@ const Target = styled.div`
   transform: translateX(-50%);
 `
 
-const ScrollerItemWrapper = styled.div`
+const ScrollerItemWrapper = styled.div<ScrollerItemWrapperProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +64,7 @@ export default function Scroller({
   scrollerRef,
   height = '70px',
   width = '60px',
-}) {
+}: ScrollerProps) {
   return (
     <Wrapper>
       <Target
@@ -80,12 +81,6 @@ export default function Scroller({
       </ScrollerWrapper>
     </Wrapper>
   )
-}
-
-type ScrollerItemProps = {
-  children: ReactElement;
-  selected: boolean;
-  gap?: string;
 }
 
 const ScrollerItem = forwardRef((props: ScrollerItemProps, ref: any) => {
@@ -107,3 +102,32 @@ const ScrollerItem = forwardRef((props: ScrollerItemProps, ref: any) => {
 })
 
 Scroller.Item = ScrollerItem
+
+type ScrollerWrapperProps = {
+  itemHeight: number | string
+  itemWidth: number | string
+}
+
+type TargetProps = {
+  height: number | string
+  width: number | string
+}
+
+type ScrollerItemWrapperProps = {
+  gap: number | string
+  selected: boolean
+}
+
+type ScrollerProps = {
+  children: any
+  targetRef: RefObject<any>
+  scrollerRef: RefObject<any>,
+  height?: number | string
+  width?: number | string
+}
+
+type ScrollerItemProps = {
+  children: ReactElement;
+  selected: boolean;
+  gap?: string;
+}
