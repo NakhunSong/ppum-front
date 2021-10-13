@@ -20,9 +20,7 @@ export default function ReceiptSelector({
 
   useEffect(() => {
     const selectedReceipt = receipts?.[selectedIndex] ?? null
-    if (selectedReceipt) {
-      handleSelectReceipt(selectedReceipt)
-    }
+    handleSelectReceipt(selectedReceipt)
   }, [receipts, selectedIndex])
 
   return (
