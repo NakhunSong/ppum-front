@@ -13,10 +13,10 @@ export function useClickoutside(callback: Function) {
     }
   }, []);
   useEffect(() => {
-    document.addEventListener('click', handleClickoutside);
+    document.addEventListener('mousedown', handleClickoutside);
     document.addEventListener('keydown', handlePressEsc);
     return () => {
-      document.addEventListener('click', handleClickoutside);
+      document.addEventListener('mousedown', handleClickoutside);
       document.addEventListener('keydown', handlePressEsc);
     }
   }, []);

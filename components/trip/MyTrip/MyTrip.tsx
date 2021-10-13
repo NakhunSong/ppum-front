@@ -34,14 +34,15 @@ export default function MyTrip() {
   const map = useRef()
   const info = useRef(null)
   const markers = useRef([])
+  const selectedMarker = useRef()
+  const lastLocation = useRef()
+  const draggedLocation = useRef()
+  const draggedReceiptId = useRef()
   const [activeMarker, setActiveMarker] = useState(false)
   const [draggingMarker, setDraggingMarker] = useState(false)
   const [formVisible, setFormVisible] = useState(false)
   const [tripDateIndex, setTripDateIndex] = useState<number>(0)
   const [confirmVisible, setConfirmVisible] = useState<boolean>(false)
-  const [lastLocation, setLastLocation] = useState(null)
-  const [movedLocation, setMovedLocation] = useState(null)
-  const [movedId, setMovedId] = useState(null)
 
   const { getTrip } = useTrips()  
   const {
@@ -53,9 +54,11 @@ export default function MyTrip() {
   } = useReceipts(dispatch)  
   const { data: tripDates } = getTrip(tripId)
   const { data: receipts = [], isLoading } = getReceipts(tripDateIndex)
-
-  const handleCancel = useCallback(() => {
+  const handleCancelModal = useCallback(() => {
     setConfirmVisible(false)
+    if (selectedMarker.current) {
+      selectedMarker.current.setPosition(lastLocation.current)
+    }
   }, [])
 
   const handleChangeMode = useCallback((modeProp: ModeType) => {
@@ -92,7 +95,7 @@ export default function MyTrip() {
       const image = new window.kakao.maps.MarkerImage(imageSrc, size)
       marker.setImage(image)
       setDraggingMarker(true)
-      setLastLocation(marker.getPosition())
+      lastLocation.current = marker.getPosition()
     })
     window.kakao.maps.event.addListener(marker, 'dragend', function() {
       const size = new window.kakao.maps.Size(50, 50)
@@ -102,8 +105,9 @@ export default function MyTrip() {
 
       if (receiptProp) {
         setConfirmVisible(true)
-        setMovedLocation(marker.getPosition())
-        setMovedId(receiptProp.id)
+        draggedLocation.current = marker.getPosition()
+        draggedReceiptId.current = receiptProp.id
+        selectedMarker.current = marker
       }
     })
   }, [])
@@ -314,7 +318,7 @@ export default function MyTrip() {
       />
       <Modal
         visible={confirmVisible}
-        onCancel={handleCancel}
+        onCancel={handleCancelModal}
       >
         hihi
       </Modal>

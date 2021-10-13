@@ -14,11 +14,11 @@ export default function Modal({
     ? (
       <Portal>
         <ScreenMask>
-          <div
-            ref={ref}
-            className={styles.wrapper}
-          >
-            <div className={styles.content}>
+          <div className={styles.wrapper}>
+            <div 
+              ref={ref}
+              className={styles.content}
+            >
               <div>
                 <div>
                   {children}
