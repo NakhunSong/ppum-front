@@ -1,0 +1,21 @@
+@import 'base.scss';
+
+.wrapper {
+  align-items: center;
+  background-color: white;
+  border: 1px solid white;
+  border-radius: $border-radius-mid;
+  bottom: 0;
+  box-shadow: rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px, rgb(0 0 0 / 12%) 0px 1px 8px 0px;
+  display: flex;
+  height: $navigation-height;
+  justify-content: space-between;
+  left: 0;
+  max-width: $mobile-size;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: fixed;
+  right: 0;
+  width: 100%;
+  z-index: 1000000;
+}

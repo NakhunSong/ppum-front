@@ -276,7 +276,6 @@ export default function MyTrip() {
 
   useEffect(() => {
     if (receiptState) {
-      console.log('coa')
       const { location, name } = receiptState
       const { lat, lng } = location
       const latlng = new window.kakao.maps.LatLng(lat, lng)

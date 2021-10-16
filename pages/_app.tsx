@@ -1,6 +1,7 @@
 import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import Layout from 'components/base/Layout'
+import Navigation from 'components/base/Navigation'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import 'styles/global.scss'
@@ -36,6 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <Component {...pageProps} />
+      <Navigation />
       <ReactQueryDevtools initialIsOpen={false} />
     </Layout>
    </QueryClientProvider>
