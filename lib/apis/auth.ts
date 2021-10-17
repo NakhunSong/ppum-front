@@ -8,17 +8,38 @@ export function useLogin(callback) {
     const { access_token: accessToken } = response?.data
     queryClient.setQueryData('accessToken', accessToken)
   }, {
-    onSuccess: callback,
+    onSuccess: () => {
+      callback()
+    },
     onError: () => { console.log('Login Failure') }
   })
 }
 
-export function useLoggedInCheck(callback) {
-  return useQuery('accessToken', {
+export function useLoggedInCheck({
+  handleSuccess,
+  handleFailure,
+}: useLoggedInCheckType) {
+  const queryClient = useQueryClient()
+  return useQuery('accessToken', () => {
+    return queryClient.getQueryData('accessToken')
+  },{
     onSuccess: (token) => {
-      if (token) { callback() }
-    }
+      if (token) {
+        handleSuccess && handleSuccess()
+      }
+    },
+    onError: () => {
+      console.log('hi')
+      handleFailure && handleFailure()
+    },
   })
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient()
+  return () => {
+    queryClient.removeQueries('accessToken', { exact: true })
+  }
 }
 
 type loginPayloadType = {
@@ -28,4 +49,9 @@ type loginPayloadType = {
 
 type loginResultType = {
   access_token: string,
+}
+
+type useLoggedInCheckType = {
+  handleSuccess?: Function
+  handleFailure?: Function
 }

@@ -21,7 +21,9 @@ export default function LoginForm() {
   const [password, handlePassword] = useInput(process.env.NEXT_PUBLIC_TEST_PASSWORD)
   const moveTrips = () => router.push('/trips')
   const mutation = useLogin(moveTrips)
-  const { data } = useLoggedInCheck(moveTrips)
+  const { data } = useLoggedInCheck({
+    handleSuccess: moveTrips,
+  })
   
   const handleLogin = useCallback(() => {
     const form = { username: email, password }

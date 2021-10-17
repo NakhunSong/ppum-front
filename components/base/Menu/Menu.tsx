@@ -3,14 +3,22 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
 import { TextButton } from 'components/common/Button/TextButton'
 import { useClickoutside } from 'hooks/useClickoutside'
-import styles from './Menu.module.scss'
+import { useLogout } from 'lib/apis/auth';
+import { useRouter } from 'next/dist/client/router';
 import { useCallback, useState } from 'react'
+import styles from './Menu.module.scss'
 import MenuItem from './MenuItem'
 
 export default function Menu() {
+  const logout = useLogout()
+  const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
   const handleMenu = useCallback((status) => {
     return () => setOpen(status)
+  }, [])
+  const handleLogout = useCallback(() => {
+    logout()
+    router.push('/login')
   }, [])
   const { ref } = useClickoutside(handleMenu(false))
   return (
@@ -27,7 +35,7 @@ export default function Menu() {
         <MenuItem onClick={() => {}}>
           <LocalAirportOutlinedIcon fontSize="large" />
         </MenuItem>
-        <MenuItem onClick={() => {}}>
+        <MenuItem onClick={handleLogout}>
           <LogoutIcon fontSize="large" />
         </MenuItem>
       </MenuItem.Group>

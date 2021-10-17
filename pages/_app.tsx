@@ -2,12 +2,12 @@ import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import Layout from 'components/base/Layout'
 import Navigation from 'components/base/Navigation'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { useEffect, useState } from 'react'
+import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import 'styles/global.scss'
-import { useEffect } from 'react'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
@@ -17,12 +17,17 @@ const queryClient = new QueryClient({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // const { accessToken } = pageProps
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     queryClient.setQueryData('accessToken', accessToken)
+  //   }
+  // }, [])
+  const [accessToken, setAccessToken] = useState(null)
   useEffect(() => {
-    const { accessToken } = pageProps
-    if (accessToken) {
-      queryClient.setQueryData('accessToken', accessToken)
-    }
-  }, [])
+    const data = queryClient.getQueryData('accessToken')
+    setAccessToken(data)
+  })
   return (
    <QueryClientProvider client={queryClient}>
     <Layout>
@@ -37,7 +42,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <Component {...pageProps} />
-      <Navigation />
+      {accessToken && (
+        <Navigation />
+      )}
       <ReactQueryDevtools initialIsOpen={false} />
     </Layout>
    </QueryClientProvider>
