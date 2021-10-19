@@ -1,3 +1,4 @@
+import { useRouter } from 'next/dist/client/router'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { backendAPI } from './api'
 
@@ -29,7 +30,6 @@ export function useLoggedInCheck({
       }
     },
     onError: () => {
-      console.log('hi')
       handleFailure && handleFailure()
     },
   })
@@ -37,8 +37,10 @@ export function useLoggedInCheck({
 
 export function useLogout() {
   const queryClient = useQueryClient()
+  const router = useRouter()
   return () => {
-    queryClient.removeQueries('accessToken', { exact: true })
+    queryClient.setQueryData('accessToken', null)
+    router.push('/login')
   }
 }
 

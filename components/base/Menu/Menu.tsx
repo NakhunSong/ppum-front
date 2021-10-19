@@ -18,7 +18,6 @@ export default function Menu() {
   }, [])
   const handleLogout = useCallback(() => {
     logout()
-    router.push('/login')
   }, [])
   const { ref } = useClickoutside(handleMenu(false))
   return (
