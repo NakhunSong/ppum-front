@@ -5,18 +5,12 @@ import { TripDateType, TripType } from "types/trip.type";
 export function useTrips() {
   const queryClient = useQueryClient()
   const getTripsAPI = async () => {
-    const accessToken = queryClient.getQueryData('accessToken')
-    const response = await backendAPI.get<tripsResultType>('/trips', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
+    const response = await backendAPI.get<tripsResultType>('/trips')
     const { data: trips } = response
     return trips
   }
   const addTrip = () => useMutation(async (form: addTripPayloadType) => {
-    const accessToken = queryClient.getQueryData('accessToken')
-    await backendAPI.post<any>('/trips', form, {
-      headers: { Authorization: `Bearer ${accessToken}`}
-    })
+    await backendAPI.post<any>('/trips', form)
   }, {
     onSuccess: async () => {
       const data = await getTripsAPI()
@@ -31,10 +25,7 @@ export function useTrips() {
     onError: () => console.log('Trips Get Error')
   })
   const getTrip = (tripId) => useQuery('trip', async () => {
-    const accessToken = queryClient.getQueryData('accessToken')
-    const response = await backendAPI.get<TripType>(`/trips/${tripId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
+    const response = await backendAPI.get<TripType>(`/trips/${tripId}`)
     const { data: trip } = response
     return trip?.tripDates
   }, {

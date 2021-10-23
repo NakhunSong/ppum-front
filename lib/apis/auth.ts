@@ -21,12 +21,15 @@ export function useLoggedInCheck({
   handleFailure,
 }: useLoggedInCheckType) {
   const queryClient = useQueryClient()
+  const router = useRouter()
   return useQuery('accessToken', () => {
     return queryClient.getQueryData('accessToken')
   },{
     onSuccess: (token) => {
       if (token) {
         handleSuccess && handleSuccess()
+      } else {
+        handleFailure && handleFailure()
       }
     },
     onError: () => {

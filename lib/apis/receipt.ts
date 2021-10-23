@@ -6,11 +6,8 @@ import { backendAPI } from "./api"
 
 export function useReceipts(dispatch: Dispatch<ActionTypes>) {
   const queryClient = useQueryClient()
-  const getAccessToken = () => queryClient.getQueryData('accessToken')
   const addReceipt = useMutation(async (payload: ReceiptPayloadType) => {
-    return await backendAPI.post('/receipts', payload, {
-      headers: { Authorization: `Bearer ${getAccessToken()}`}
-    })
+    return await backendAPI.post('/receipts', payload)
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('trip')
@@ -18,9 +15,7 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
     onError: () => console.error('Receipt Add Failure')
   })
   const modifyReceipt = useMutation(async (payload: ReceiptType) => {
-    return await backendAPI.patch(`/receipts/${payload.id}`, payload, {
-      headers: { Authorization: `Bearer ${getAccessToken()}`}
-    })
+    return await backendAPI.patch(`/receipts/${payload.id}`, payload)
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('trip')
@@ -31,8 +26,6 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
     return backendAPI.post<ReceiptItemType>(`/receipts/${payload.receiptId}/item`, {
       name: payload.name,
       prices: payload.prices,
-    }, {
-      headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
     onSuccess: () => {
@@ -44,8 +37,6 @@ export function useReceipts(dispatch: Dispatch<ActionTypes>) {
     return await backendAPI.put<ReceiptItemType>(`/receipts/${payload.receiptId}/item/${payload.id}`, {
       name: payload.name,
       prices: payload.prices,
-    }, {
-      headers: { Authorization: `Bearer ${getAccessToken()}`}
     })
   }, {
     onSuccess: () => {
