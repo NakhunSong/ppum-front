@@ -13,11 +13,15 @@ export default function Menu() {
   const logout = useLogout()
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
+  const handleLogout = useCallback(() => {
+    logout()
+  }, [])
   const handleMenu = useCallback((status) => {
     return () => setOpen(status)
   }, [])
-  const handleLogout = useCallback(() => {
-    logout()
+  const handleTripsMenu = useCallback(() => {
+    router.push('/trips')
+    setOpen(false)
   }, [])
   const { ref } = useClickoutside(handleMenu(false))
   return (
@@ -31,7 +35,7 @@ export default function Menu() {
         </div>
       </TextButton>
       <MenuItem.Group visible={open}>
-        <MenuItem onClick={() => {}}>
+        <MenuItem onClick={handleTripsMenu}>
           <LocalAirportOutlinedIcon fontSize="large" />
         </MenuItem>
         <MenuItem onClick={handleLogout}>

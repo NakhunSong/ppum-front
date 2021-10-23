@@ -59,9 +59,6 @@ const MenuItemWrapper = styled.div`
 `
 
 const MenuItemGroup = styled.div<MenuItemGroupProps>`
-  animation: ${(props) => props.visible
-    ? appear
-    : disappear} 0.5s ease-in-out;
   display: flex;
   transform: scale(${(props) => props.visible ? 1 : 0});
   position: absolute;
