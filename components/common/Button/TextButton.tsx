@@ -16,6 +16,6 @@ export function TextButton({
 }
 
 type TextButtonProps = {
-  children: ReactElement | string
+  children: any
   onClick: MouseEventHandler
 }
