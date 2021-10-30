@@ -16,9 +16,10 @@ export default function TripSelectSection() {
   const [dateArray, setDateArray] = useState([])
   const [name, setName] = useState('trip_ex')
   const [ready, setReady] = useState(false)
+  const [openSelector, setOpenSelector] = useState(false)
   const [selectedTripId, setSelectedTripId] = useState(null)
   const [turn, setTurn] = useState('start')
-  
+
   const {
     addTrip,
     getTrips,
@@ -86,10 +87,9 @@ export default function TripSelectSection() {
   }, [selectedTripId])
 
   return (
-    <MobileTemplate
-      header={<Calendar.header />}
-    >
+    <MobileTemplate>
       <div className={styles.wrapper}>
+        <Calendar.header />
         <Calendar
           calendar={calendar}
           dateArray={dateArray}
@@ -103,8 +103,6 @@ export default function TripSelectSection() {
             rightText="종료일"
             onClick={handleSwitch}
           />
-        </div>
-        <div className={styles.select_button_wrapper}>
           <MainButton
             disabled={!ready}
             onClick={handleAdd}
@@ -114,17 +112,28 @@ export default function TripSelectSection() {
         </div>
       </div>
       {trips && (
-        <TripSelector
-          trips={trips}
-          setSelectedTripId={setSelectedTripId}
-        />
-      )}
-      {trips && (
-        <MainButton
-          onClick={handleSelectTrip}
-        >
-          이전 여행
-        </MainButton>
+        <div className={styles.trip_selector}>
+          {!openSelector
+            ? (
+              <MainButton
+                onClick={() => setOpenSelector(true)}
+              >
+                이전 여행 편집
+              </MainButton>
+            ): (
+              <div className={styles.trip_selector}>
+                <TripSelector
+                  trips={trips}
+                  setSelectedTripId={setSelectedTripId}
+                />
+                <MainButton
+                  onClick={handleSelectTrip}
+                >
+                  여행 편집
+                </MainButton>
+              </div>
+            )}
+        </div>
       )}
     </MobileTemplate>
   )

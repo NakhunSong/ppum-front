@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   align-items: center;
   display: flex;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
 `
 
 const ScrollerWrapper = styled.div<ScrollerWrapperProps>`
