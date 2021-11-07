@@ -9,12 +9,22 @@
 
 .button_wrapper {
   display: flex;
+  flex-direction: column;
   gap: 16px;
   justify-content: center;
+  align-items: center;
   margin-top: 24px;
 }
 
 .trip_selector {
   text-align: center;
   width: 100%;
+}
+
+.trip_creator {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  gap: 16px;
 }

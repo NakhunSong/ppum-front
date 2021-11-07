@@ -1,14 +1,15 @@
 import MainButton from 'components/common/MainButton/MainButton'
-import SwitchButton from 'components/common/SwitchButton'
+import MainInput from 'components/common/MainInput'
 import MobileTemplate from 'components/template/MobileTemplate'
+import SwitchButton from 'components/common/SwitchButton'
 import { getDateArray, useCalendar } from 'hooks/useCalendar'
 import { useTrips } from 'lib/apis/trip'
 import { addZeroToOneDigit } from 'lib/helpers/trip/calendar'
 import { useRouter } from 'next/dist/client/router'
 import { useCallback, useEffect, useState } from 'react'
+import styles from './TripSelectSection.module.scss'
 import Calendar from '../Calendar'
 import TripSelector from '../TripSelector'
-import styles from './TripSelectSection.module.scss'
 
 export default function TripSelectSection() {
   const router = useRouter()
@@ -16,7 +17,7 @@ export default function TripSelectSection() {
   const [dateArray, setDateArray] = useState([])
   const [name, setName] = useState('trip_ex')
   const [ready, setReady] = useState(false)
-  const [openSelector, setOpenSelector] = useState(false)
+  const [isDateSelected, setIsDateSelected] = useState(false)
   const [selectedTripId, setSelectedTripId] = useState(null)
   const [turn, setTurn] = useState('start')
 
@@ -44,7 +45,7 @@ export default function TripSelectSection() {
     if (calendar.start && !calendar.end) {
       setTurn('end')
     }
-    setReady(calendar.start && calendar.end);
+    setIsDateSelected(calendar.start && calendar.end)
     console.log('calendar updated')
   }, [calendar])
 
@@ -103,36 +104,30 @@ export default function TripSelectSection() {
             rightText="종료일"
             onClick={handleSwitch}
           />
-          <MainButton
-            disabled={!ready}
-            onClick={handleAdd}
-          >
-            여행 추가
-          </MainButton>
+          {isDateSelected && (
+            <div className={styles.trip_creator}>
+              <MainInput />
+              <MainButton
+                disabled={!ready}
+                onClick={handleAdd}
+              >
+                여행 추가
+              </MainButton>
+            </div>
+          )}
         </div>
       </div>
       {trips && (
         <div className={styles.trip_selector}>
-          {!openSelector
-            ? (
-              <MainButton
-                onClick={() => setOpenSelector(true)}
-              >
-                이전 여행 편집
-              </MainButton>
-            ): (
-              <div className={styles.trip_selector}>
-                <TripSelector
-                  trips={trips}
-                  setSelectedTripId={setSelectedTripId}
-                />
-                <MainButton
-                  onClick={handleSelectTrip}
-                >
-                  여행 편집
-                </MainButton>
-              </div>
-            )}
+          <TripSelector
+            trips={trips}
+            setSelectedTripId={setSelectedTripId}
+          />
+          <MainButton
+            onClick={handleSelectTrip}
+          >
+            여행 편집
+          </MainButton>
         </div>
       )}
     </MobileTemplate>
