@@ -8,11 +8,11 @@
 }
 
 .button_wrapper {
+  align-items: center;
+  justify-content: center;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  justify-content: center;
-  align-items: center;
   margin-top: 24px;
 }
 
@@ -22,9 +22,10 @@
 }
 
 .trip_creator {
-  display: flex;
   align-items: center;
-  width: 100%;
   justify-content: center;
+  display: flex;
   gap: 16px;
+  padding: 0 24px;
+  width: 100%;
 }

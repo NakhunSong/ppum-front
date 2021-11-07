@@ -15,7 +15,7 @@ export default function TripSelectSection() {
   const router = useRouter()
   const [calendar, dispatch] = useCalendar()
   const [dateArray, setDateArray] = useState([])
-  const [name, setName] = useState('trip_ex')
+  const [name, setName] = useState(null)
   const [ready, setReady] = useState(false)
   const [isDateSelected, setIsDateSelected] = useState(false)
   const [selectedTripId, setSelectedTripId] = useState(null)
@@ -48,6 +48,10 @@ export default function TripSelectSection() {
     setIsDateSelected(calendar.start && calendar.end)
     console.log('calendar updated')
   }, [calendar])
+
+  useEffect(() => {
+    setReady(isDateSelected && !!name)
+  }, [isDateSelected, name])
 
   const handleClickMonth = useCallback((direction) => {
     dispatch({
@@ -106,7 +110,12 @@ export default function TripSelectSection() {
           />
           {isDateSelected && (
             <div className={styles.trip_creator}>
-              <MainInput />
+              <MainInput
+                style={{ width: '100%', maxWidth: '200px' }}
+                placeholder="여행 이름"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
               <MainButton
                 disabled={!ready}
                 onClick={handleAdd}
